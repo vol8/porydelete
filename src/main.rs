@@ -22,6 +22,8 @@ fn main() {
         } else if let Err(err) = map_json_attr::process_file_and_delete_attribute(&target_path, &args) {
             eprintln!("Error: {}", err);
         }
-    } 
+    } else {
+        eprintln!("Unknown Argumen {}", args[1]);
+    }
 
 }

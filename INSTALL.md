@@ -5,8 +5,8 @@ Before we jump into the installation/building process, you need to have Rust ins
 Follow:
 
 ```
-git clone https://github.com/Voluptua/Porydelete
-cd Porydelete/
+git clone https://github.com/Voluptua/porydelete
+cd porydelete/
 cargo build
 ```
 

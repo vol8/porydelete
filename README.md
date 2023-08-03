@@ -10,7 +10,7 @@ I am working on this project because:
 
 # State of development
 
-There isnt a stable release yet but I managed to edit json files as I need for deleting map events. I can use that for more. Feel free to contribute
+There isnt a stable release yet but I managed to edit json files as I need for deleting map attributes. I can use that for more. Feel free to contribute
 
 # Features
 
@@ -30,11 +30,11 @@ Follow these instructions to build this project: [INSTALL.md](https://github.com
 Then place `porydelete` into the root of your project
 Run `./porydelete --help` for more information
 
-## To delete Map-Events run:
+## To delete Map-Attributes run:
 
-```./porydelete --MAPEVENTS <attributes>```\
+```./porydelete --MAPATTR <attributes>```\
 or \
-```./porydelete --me <attributes>```
+```./porydelete --ma <attributes>```
 
 Available attributes to delete (can be placed in any order): 
   - `connections`
@@ -43,7 +43,7 @@ Available attributes to delete (can be placed in any order):
   - `bg_events`
   - `coord_events`
 
-Examples: 
-  `./porydelete --MAPEVENTS connections coord_events`
-  `./porydelete --me warp_events connections`
+Examples: \
+  `./porydelete --MAPATTR connections coord_events`\
+  `./porydelete --ma warp_events connections`
 

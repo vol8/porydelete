@@ -17,7 +17,7 @@ pub fn create_json_indexmap(text: &String) -> IndexMap<String, Value> {
 pub fn overwrite_json_with_mod(map: &IndexMap<String, Value>, path: &Path) {
     // converts it back to a string
     let map_str = serde_json::to_string_pretty(&map).unwrap();
-      // writes data to map.json
+    // writes data to map.json
     fstream::write_text(path, map_str, true).unwrap();
 }
 
@@ -26,9 +26,13 @@ pub fn remove_for_given_args(map: &mut IndexMap<String, Value>, args: &Vec<Strin
     let keys_to_remove = vec!["connections", "object_events", "warp_events", "bg_events", "coord_events"];
 
     for i in 2..args.len() {
+        let mut found_arg = false;
         if let Some(key) = keys_to_remove.iter().find(|&k| args[i] == *k) {
             map.remove(*key);
             println!("{}: Removed!", key);
+            found_arg = true;
+        } else if found_arg == false {
+            eprintln!("Error: Unknown argument `{}`", args[i]);
         }
     }
 }
