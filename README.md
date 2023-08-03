@@ -19,7 +19,8 @@ There isnt a stable release yet but I managed to edit json files as I need for d
 |Delete map events|✅| 
 |Delete Maps|❌|
 |Delete Tilesets|❌|
-|Delete Unused (Unused code wrote by Game freak which isnt removed)|❌|
+|List and Delete unused scripts|❌|
+|Delete Unused (Unused code wrote by Game freak which isnt removed by default)|❌|
 |Delete Pokemon|❌|
 |Delete Items|❌|
 |Delete Battle-Engine features (expansion only)|❌|
