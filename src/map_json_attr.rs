@@ -1,3 +1,4 @@
+#![allow(unused_assignments)]
 use indexmap::IndexMap;
 use std::path::Path;
 use serde_json::Value;
