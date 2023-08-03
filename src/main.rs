@@ -1,38 +1,27 @@
-use serde_json::Value;
 use std::env;
-use indexmap::IndexMap;
-
+use std::path::Path;
+mod map_json_attr;
 extern crate fstream;
 
-// test
-fn read_settings() -> Result<Vec<u8>, String> {
-    Ok(vec![1,2,3])
-}
-
-// test
-fn exec_for_settings(settings: Vec<u8>) {
-    
-}
 
 fn main() {
-    //let args: Vec<String> = env::args().collect();
-    let settings = read_settings().unwrap();
-    exec_for_settings(settings);
+    let args: Vec<String> = env::args().collect();
+    if args.len() == 1 {
+        eprintln!("Too few arguments. Use `./Porydelete --help` for more information");
+    } else if args[1] == "--help" {
+        println!("Porydelete help: \n");
+        println!("--MAPATTR or --ma        deletes mapattributes in map.json");
+    } else if args[1] == "--MAPATTR" || args[1] == "--ma"{
+        let target_directory = "./data/maps"; // Directory of maps where map.json is
 
-    // reads text in map.json and stores it into data
-    let data = fstream::read_text("map.json").expect("Cannot find this file");
+        let target_path = Path::new(target_directory);
+        if !target_path.exists() {
+            eprintln!("Error: The directory `./data/maps` does not exist.");
+        } else if !target_path.is_dir() {
+            eprintln!("Error: `./data/maps` is not a directory");
+        } else if let Err(err) = map_json_attr::process_file_and_delete_attribute(&target_path, &args) {
+            eprintln!("Error: {}", err);
+        }
+    } 
 
-    // Converts the plain text of &data to an indexmap which just contains the ordered json ready for being used
-    // Why IndexMap instead of Map? Because otherwise the json wouldn't be in order
-    let mut map: IndexMap<String, Value> = serde_json::from_str(&data)
-    .expect("failed to read file");
-    
-    // removes "warp_events" in the copy of `data`
-    map.remove("warp_events");
-
-    // converts it back to a string 
-    let map_str = serde_json::to_string_pretty(&map).unwrap();
-
-    // writes data to map.json
-    fstream::write_text("map.json", map_str, true).unwrap();
 }

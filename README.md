@@ -10,11 +10,40 @@ I am working on this project because:
 
 # State of development
 
-Since I JUST created this repository and havnt pushed to it yet, its quite obvious that there isnt a stable release yet but I am more than motivated to create this tool! 
+There isnt a stable release yet but I managed to edit json files as I need for deleting map events. I can use that for more. Feel free to contribute
+
+# Features
+
+| Feature | Added? |
+|---------|--------|
+|Delete map events|✅| 
+|Delete Maps|❌|
+|Delete Tilesets|❌|
+|Delete Unused (Unused code wrote by Game freak which isnt removed)|❌|
+|Delete Pokemon|❌|
+|Delete Items|❌|
+|Delete Battle-Engine features (expansion only)|❌|
 
 # Getting started
 
 Follow these instructions to build this project: [INSTALL.md](https://github.com/Voluptua/Porydelete/blob/main/INSTALL.md)
+Then place `porydelete` into the root of your project
+Run `./porydelete --help` for more information
 
-_todo_
+## To delete Map-Events run:
+
+```./porydelete --MAPEVENTS <attributes>```\
+or \
+```./porydelete --me <attributes>```
+
+Available attributes to delete (can be placed in any order): 
+  - `connections`
+  - `object_events`
+  - `warp_events`
+  - `bg_events`
+  - `coord_events`
+
+Examples: 
+  `./porydelete --MAPEVENTS connections coord_events`
+  `./porydelete --me warp_events connections`
 
