@@ -1,7 +1,6 @@
 // build.rs
 // todo: set target for macOS
 
-
 fn main() {
     let target = std::env::var("TARGET").unwrap();
 

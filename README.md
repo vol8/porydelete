@@ -33,8 +33,6 @@ Run `./porydelete --help` for more information
 
 ## To delete Map-Attributes run:
 
-```./porydelete --MAPATTR <attributes>```\
-or \
 ```./porydelete --ma <attributes>```
 
 Available attributes to delete (can be placed in any order): 
@@ -45,6 +43,6 @@ Available attributes to delete (can be placed in any order):
   - `coord_events`
 
 Examples: \
-  `./porydelete --MAPATTR connections coord_events`\
+  `./porydelete --ma connections coord_events`\
   `./porydelete --ma warp_events connections`
 
