@@ -20,6 +20,16 @@ pub fn remove_attributes(map: &mut IndexMap<String, Value>, args: &Vec<String>) 
         "coord_events",
     ];
 
+    let remove_all = args.len() > 2 && args[2] == "-a";
+
+    if remove_all {
+        for key in &keys_to_remove {
+            map.remove(*key);
+            println!("Success: {} removed!", key);
+        }
+        return;
+    }
+
     for i in 2..args.len() {
         let mut found_arg = false;
         if let Some(key) = keys_to_remove.iter().find(|&k| args[i] == *k) {
@@ -44,10 +54,8 @@ pub fn parse_file_and_delete_attribute(
             let path = entry.path();
 
             if path.is_dir() {
-                // Skip the directory which was specified in args[] to be skipped
-                // test not final
-                // ignore for now
-                if path.file_name().and_then(|n| n.to_str()) == Some("test") {
+                // 'porytiles-filter'
+                if path.file_name().and_then(|n| n.to_str()) == Some("porydelete-filter") {
                     continue;
                 }
                 parse_file_and_delete_attribute(&path, args)?;

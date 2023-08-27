@@ -5,36 +5,44 @@ Porydelete is a CLI tool which allows you to delete specific parts of the 3.gen 
 I am working on this project because:
   - I am not good at coding with Rust and I want to get better using this language
   - I always wanted to create a romhacking Tool (even in the binary hacking times)
-  - I am also working on my own romhack and I want to save storage by removing unused content in the final product such as unused Items or Pokemon
+  - I am also working on my own romhack and I want to save space by removing unused content in the final product such as unused Items or Tilesets
 
 
 # State of development
 
-There isnt a stable release yet but I managed to edit json files as I need for deleting map attributes. I can use that for more. Feel free to contribute
+First Release available! 1.0! Now you can safely delete Map-Attributes and filter/defilter maps (see [Getting Started](https://github.com/Voluptua/porydelete#getting-started)) which you don't want to be edited! Why is that good? Well, maybe you stumbled across this tool after you started editing maps, so you don't want them to be edited. If you come across any bugs please file an issue here: [File an Issue](https://github.com/Voluptua/porydelete/issues) (Remember that my code maybe isn't perfect because I am not good at coding generally, but I tried to do proper error handling and I tried to document as much as possible so that other people like YOU can contribute!)
 
 # Features
 
-| Feature | Added? |
-|---------|--------|
-|Delete map events|✅| 
-|Delete Maps|❌|
-|Delete Tilesets|❌|
-|List and Delete unused scripts|❌|
-|Delete Unused (Unused code wrote by Game freak which isnt removed by default)|❌|
-|Delete Pokemon|❌|
-|Delete Items|❌|
-|Delete Battle-Engine features (expansion only)|❌|
+| Feature | Works? | Fully added?| When?
+|---------|--------|--------|------|
+|Delete Map-Attributes|✅|✅|1.0 
+|Delete Maps|❌|❌|2.0
+|Delete Map-Tilesets|❌| ❌|3.0
+|List Scripts|❌|❌|4.0
+|Delete Scripts|❌|❌|4.0
+|Delete Pokemon|❌|❌|5.0
+|Delete Items|❌|❌|6.0
+
+
 
 # Getting started
 
-Follow these instructions to build this project: [INSTALL.md](https://github.com/Voluptua/Porydelete/blob/main/INSTALL.md)
-Then place `porydelete` into the root of your project
-Run `./porydelete --help` for more information
+Follow these instructions to build this project: [INSTALL.md](https://github.com/Voluptua/Porydelete/blob/main/INSTALL.md).
+Then place `porydelete` into the root of your project. \
+Run `./porydelete --help` for more information.
 
-## To delete Map-Attributes run:
+## Map-Attributes and Filtering/Defiltering:
 
-```./porydelete --ma <attributes>```
-
+This is how you delete Map-Attributes:\
+```./porydelete --ma <attributes>```\
+\
+This is how to filter/defilter Maps:\
+```./porydelete --ma --filter <mapnames>```\
+```./porydelete --ma --defilter <mapnames / -a>```\
+\
+\
+\
 Available attributes to delete (can be placed in any order): 
   - `connections`
   - `object_events`
@@ -43,6 +51,10 @@ Available attributes to delete (can be placed in any order):
   - `coord_events`
 
 Examples: \
+  `./porydelete --ma --filter MyNewTown`\
   `./porydelete --ma connections coord_events`\
-  `./porydelete --ma warp_events connections`
+  `./porydelete --ma --defilter MyNewTown`\
+  \
+  `./porydelete --ma --filter MyNewTown Foo Bar`\
+  `./porydelete --ma --defilter -a`
 
