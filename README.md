@@ -10,7 +10,7 @@ I am working on this project because:
 
 # State of development
 
-First Release available! 1.0! Now you can safely delete Map-Attributes and filter/defilter maps (see [Getting Started](https://github.com/Voluptua/porydelete#getting-started)) which you don't want to be edited! Why is that good? Well, maybe you stumbled across this tool after you started editing maps, so you don't want them to be edited. If you come across any bugs please file an issue here: [File an Issue](https://github.com/Voluptua/porydelete/issues) (Remember that my code maybe isn't perfect because I am not good at coding generally, but I tried to do proper error handling and I tried to document as much as possible so that other people like YOU can contribute!)
+First Release available! 1.0! Now you can safely delete Map-Attributes and filter/defilter maps (see [Map-Attributes and Filtering/Defiltering](https://github.com/Voluptua/porydelete#map-attributes-and-filteringdefiltering)) which you don't want to be edited! Why is that good? Well, maybe you stumbled across this tool after you started editing maps, so you don't want them to be edited. If you come across any bugs please file an issue here: [File an Issue](https://github.com/Voluptua/porydelete/issues) (Remember that my code maybe isn't perfect because I am not good at coding generally, but I tried to do proper error handling and I tried to document as much as possible so that other people like YOU can contribute!)
 
 # Features
 
