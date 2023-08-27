@@ -62,7 +62,7 @@ If no argument is given, Porydelete won't delete anything.
 
     <mapname>       these are the maps filtered or defiltered when using '--filter'/'--defilter'
 
-    '-a'            deletes for every other [ARGUMENTS]
+    '-a'            deletes for every other map-attribute
                   
 ";
 

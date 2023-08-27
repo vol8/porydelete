@@ -39,7 +39,7 @@ This is how you delete Map-Attributes:\
 \
 This is how to filter/defilter Maps:\
 ```./porydelete --ma --filter <mapnames>```\
-```./porydelete --ma --defilter <mapnames / -a>```\
+```./porydelete --ma --defilter <mapnames>```\
 \
 \
 \
@@ -53,8 +53,5 @@ Available attributes to delete (can be placed in any order):
 Examples: \
   `./porydelete --ma --filter MyNewTown`\
   `./porydelete --ma connections coord_events`\
-  `./porydelete --ma --defilter MyNewTown`\
-  \
-  `./porydelete --ma --filter MyNewTown Foo Bar`\
-  `./porydelete --ma --defilter -a`
+  `./porydelete --ma --defilter MyNewTown`
 

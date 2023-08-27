@@ -31,7 +31,7 @@ impl PdFilter {
                     if !elem_path.exists() {
                         eprintln!("Error: Element '{}' not found.", e);
                     } else {
-                        if let Err(err) = dir::move_dir(&elem_path, &dest_path, &options) {
+                        if let Err(err) = fs::rename(&elem_path, &dest_path) {
                             eprintln!("Error: Could not move '{}': {}", e, err);
                         } else {
                             println!("Success: '{}' moved.", e);
@@ -60,18 +60,6 @@ impl PdFilter {
                         }
                     } 
                     
-                }
-            } else if &self.elem[3] == "-a" {
-                let path_to_defilter = Path::new(&self.start_dir).join("/porydelete-filter");
-                for entry in fs::read_dir(&path_to_defilter)? {
-                    // Subdir (So every elem in 'path_to_defilter')
-                    let entry = entry?;
-
-                    if let Err(err) = dir::move_dir(&path_to_defilter.clone(), &self.start_dir, &options) {
-                        eprintln!("Error: Could not move '{:#?}': {}", entry, err);
-                    } else {
-                        println!("Success: '{:#?}' moved.", entry);
-                    }
                 }
             }
         }
