@@ -96,6 +96,7 @@ pub fn parse_file_and_delete_attribute(
             found_arg = true;
         } else if found_arg == false {
             eprintln!("Error: Unknown argument `{}`", args[i]);
+            eprintln!("Use './porydelete --ma --help' for more information.");
         }
     }
     if dir.is_dir() && args.len() >= 3 { // checks if there are at least 3 arguments, since thats needed to modify something
