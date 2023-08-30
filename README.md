@@ -16,13 +16,13 @@ First Release available! 1.0! Now you can safely delete Map-Attributes and filte
 
 | Feature | Works? | Fully added?| When?
 |---------|--------|--------|------|
-|Delete Map-Attributes|✅|✅|1.0 
-|Delete Maps|❌|❌|2.0
-|Delete Map-Tilesets|❌| ❌|3.0
-|List Scripts|❌|❌|4.0
-|Delete Scripts|❌|❌|4.0
-|Delete Pokemon|❌|❌|5.0
-|Delete Items|❌|❌|6.0
+|Delete Map-Attributes|✅|✅|0.1.0 
+|Delete Maps|❌|❌|0.2.0
+|Delete Map-Tilesets|❌| ❌|0.3.0
+|List Scripts|❌|❌|0.4.0
+|Delete Scripts|❌|❌|0.4.0
+|Delete Pokemon|❌|❌|0.5.0
+|Delete Items|❌|❌|0.6.0
 
 
 
