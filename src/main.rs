@@ -91,7 +91,23 @@ fn main() {
                     eprintln!("Error: {}", err);
                 }
             }
-        }
+        },
+
+        "--m" => {
+            if args.len() == 2 || (args.len() >= 3 && args[2] != "--help") {
+                // see top comment in 'src/m.rs' to understand what each of these directories do
+                let dirs_array: Vec<String> = vec![
+                    String::from("./data/maps/"), 
+                    String::from("./data/layouts/"),
+                    String::from("./data/event_scripts.s"),
+                    String::from("./data/layouts/layouts.json"),
+                    String::from("./data/maps/map_groups.json"),
+                ];
+                if let Err(err) = m::parse_file_and_delete_map(&dirs_array, &args) {
+                    eprintln!("Error: {}", err);
+                }
+            }
+        },
 
         _ => eprintln!("Error: Unknown argument {}", args[1]),
     }

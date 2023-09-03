@@ -1,6 +1,6 @@
 #![allow(unused_assignments)]
 use indexmap::IndexMap;
-use serde_json::Value;
+use serde_json::{Value, json};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -29,16 +29,26 @@ fn remove_attributes(
     // todo: Fix result message for -a
     if remove_all {
         for key in &keys_to_remove {
-            map.remove(*key);
-            *c_change_counter += 1;
+            if key.to_string() == "connections" {
+                map.insert(key.to_string(), serde_json::Value::Null);
+                *c_change_counter += 1;
+            } else {
+                map.insert(key.to_string(), json!([]));
+                *c_change_counter += 1;
+            }
         }
         return;
     }
 
     for i in 2..args.len() {
         if let Some(key) = keys_to_remove.iter().find(|&k| args[i] == *k) {
-            map.remove(*key);
-            *c_change_counter += 1;
+            if key.to_string() == "connections" {
+                map.insert(key.to_string(), serde_json::Value::Null);
+                *c_change_counter += 1;
+            } else {
+                map.insert(key.to_string(), json!([]));
+                *c_change_counter += 1;
+            }
         }
     }
 }
@@ -62,9 +72,14 @@ fn enter_subdir_and_execute_deletion(
                     .expect("Error: Failed to correctly read IndexMap of 'map.json', check for any last changes you made to any map!");
                 remove_attributes(&mut map, args, c_change);
                 overwrite_json_with_changes(&map, &path);
-            } else if path.file_name().and_then(|n| n.to_str()) != Some("scripts.inc") {
-                maps_failed.push(path.clone());
-                *c_failed += 1;
+            } else if path.file_name().and_then(|n| n.to_str()) == Some("scripts.inc") {
+                continue;
+            } else if path.file_name().and_then(|n| n.to_str()) == Some("connections.inc") {
+                continue;
+            } else if path.file_name().and_then(|n| n.to_str()) == Some("events.inc") {
+                continue;
+            } else if path.file_name().and_then(|n| n.to_str()) == Some("header.inc") {
+                continue;
             }
         }
     }
