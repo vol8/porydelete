@@ -1,6 +1,6 @@
 #![allow(unused_assignments)]
 use indexmap::IndexMap;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -91,8 +91,7 @@ pub fn parse_file_and_delete_attribute(
     dir: &Path,
     args: &Vec<String>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-
-// COLLECTING RESULT DATA
+    // COLLECTING RESULT DATA
     let mut change_count = 0; // counter for successful changes
     let mut failed_count = 0; // counter for failed changes
     let mut failed_maps: Vec<PathBuf> = Vec::new(); // Array which holds map paths of all changes which failed for that map
@@ -121,7 +120,7 @@ pub fn parse_file_and_delete_attribute(
         }
     }
 
-// MAP-ATTRIBUTE MODIFICATION EXECUTION
+    // MAP-ATTRIBUTE MODIFICATION EXECUTION
     if dir.is_dir() && args.len() >= 3 {
         // checks if there are at least 3 arguments, since thats needed to modify something
 
@@ -148,12 +147,12 @@ pub fn parse_file_and_delete_attribute(
         }
     }
 
-// RESULT PRINTING
+    // RESULT PRINTING
     println!("\nResult:");
     if selected_attributes.len() == 0 {
         selected_attributes.push(String::from("None"));
     }
-    
+
     if selected_attributes[0] != String::from("-a") {
         println!(
             "  Maps successfully modified: {}",
