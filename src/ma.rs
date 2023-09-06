@@ -72,14 +72,18 @@ fn enter_subdir_and_execute_deletion(
                     .expect("Error: Failed to correctly read IndexMap of 'map.json', check for any last changes you made to any map!");
                 remove_attributes(&mut map, args, c_change);
                 overwrite_json_with_changes(&map, &path);
-            } else if path.file_name().and_then(|n| n.to_str()) == Some("scripts.inc") {
-                continue;
-            } else if path.file_name().and_then(|n| n.to_str()) == Some("connections.inc") {
-                continue;
-            } else if path.file_name().and_then(|n| n.to_str()) == Some("events.inc") {
-                continue;
-            } else if path.file_name().and_then(|n| n.to_str()) == Some("header.inc") {
-                continue;
+            } else if path.file_name().and_then(|n| n.to_str()) != Some("scripts.inc") {
+                maps_failed.push(path);
+                *c_failed += 1;
+            } else if path.file_name().and_then(|n| n.to_str()) != Some("connections.inc") {
+                maps_failed.push(path);
+                *c_failed += 1;
+            } else if path.file_name().and_then(|n| n.to_str()) != Some("events.inc") {
+                maps_failed.push(path);
+                *c_failed += 1;
+            } else if path.file_name().and_then(|n| n.to_str()) != Some("header.inc") {
+                maps_failed.push(path);
+                *c_failed += 1;
             }
         }
     }
