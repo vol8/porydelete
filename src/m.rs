@@ -3,7 +3,7 @@
 //
 // Steps of deleting a map <target>:
 //-----------------------------------------------------------------------------------------------------------------------------------------------------
-//   1   Remove map connections from other maps connecting to <target>. 
+//   1   Remove map connections from other maps connecting to <target>.                             done (not tested yet)
 //   2   Delete './data/maps/<target>'                                                              done
 //   3   Delete './data/layouts/<target>'                                                           done
 //   4   In './data/event_scripts.s' remove line '.include "data/maps/<target>/scripts.inc"'        done
@@ -34,7 +34,7 @@ fn get_path(n_map: &String, dirs_string: &Vec<String>, n_for_which_step: u8) -> 
     }
 }
 
-fn camel_to_snake_with_map_prefix(input: &String) -> String {
+fn get_snake_name(input: &String, which: u8) -> String {
     let mut result = String::new();
     let mut prev_char: Option<char> = None;
 
@@ -49,7 +49,15 @@ fn camel_to_snake_with_map_prefix(input: &String) -> String {
         result.push(current_char.to_ascii_uppercase());
         prev_char = Some(current_char);
     }
-    result = String::from("MAP_") + &result;
+    match which {
+        1 => {
+            result = String::from("MAP_") + &result;
+        },
+        2 => {
+            result = String::from("LAYOUT_") + &result;
+        },
+        _ => {}
+    }
     result
 }
 
@@ -102,7 +110,7 @@ pub fn parse_file_and_delete_map(
     // Step 1 (untested)
     {
        let t_data_maps_dir = Path::new(&dirs_string[0]);
-       let n_map = camel_to_snake_with_map_prefix(&args[2]);
+       let n_map = get_snake_name(&args[2], 1);
        delete_object(args, &t_data_maps_dir, n_map)?;
     }   
     
@@ -149,6 +157,18 @@ pub fn parse_file_and_delete_map(
         } else {
             eprintln!("Fatal Error: '{}' doesn't exist! Without 'event_scripts.s', your project cannot compile!", path.display());
         }
+    }
+
+    // Step 5 (untested)
+    {
+        let t_data_layouts_json_dir = Path::new(&dirs_string[3]);
+        let n_map = get_snake_name(&args[2], 2);
+        delete_object(args, &t_data_layouts_json_dir, n_map)?;
+    }
+
+    // Step 6
+    {
+
     }
     Ok(())
 }
