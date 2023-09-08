@@ -35,15 +35,15 @@ Run `./porydelete --help` for more information.
 ## Map-Attributes and Filtering/Defiltering:
 
 This is how you delete Map-Attributes:\
-```./porydelete --ma <attributes>```\
+```./porydelete attr <attribute>```\
 \
 This is how to filter/defilter Maps:\
-```./porydelete --ma --filter <mapnames>```\
-```./porydelete --ma --defilter <mapnames>```\
+```./porydelete attr-fil <mapname>```\
+```./porydelete attr-defil <mapname>```\
 \
 \
 \
-Available attributes to delete (can be placed in any order): 
+Available attributes to delete (only one per execution): 
   - `connections`
   - `object_events`
   - `warp_events`
@@ -51,7 +51,7 @@ Available attributes to delete (can be placed in any order):
   - `coord_events`
 
 Examples: \
-  `./porydelete --ma --filter MyNewTown`\
-  `./porydelete --ma connections coord_events`\
-  `./porydelete --ma --defilter MyNewTown`
+  `./porydelete attr-fil MyNewTown`\
+  `./porydelete attr connections`\
+  `./porydelete attr-defil MyNewTown`
 
