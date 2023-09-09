@@ -54,4 +54,3 @@ Examples: \
   `./porydelete attr-fil MyNewTown`\
   `./porydelete attr connections`\
   `./porydelete attr-defil MyNewTown`
-

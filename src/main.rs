@@ -1,6 +1,7 @@
 // Modules
 mod args;
 mod del_attribute;
+mod del_map;
 mod filter;
 mod list;
 
