@@ -1,5 +1,3 @@
-use crate::args::Args;
-
 use indexmap::IndexMap;
 use serde_json::{json, Value};
 use std::fs;
@@ -26,12 +24,12 @@ fn print_result(
 }
 
 // Not really removes it but if replaces the key in the map with the new value.
-fn remove_attribute(args: &Args, map: &mut IndexMap<String, Value>, c_success: &mut i32) {
-    if args.value.as_str() == "connections" {
-        map.insert(args.value.clone(), serde_json::Value::Null);
+fn remove_attribute(value: &str, map: &mut IndexMap<String, Value>, c_success: &mut i32) {
+    if value == "connections" {
+        map.insert(value.to_owned(), serde_json::Value::Null);
         *c_success += 1;
     } else {
-        map.insert(args.value.clone(), json!([]));
+        map.insert(value.to_owned(), json!([]));
         *c_success += 1;
     }
 }
@@ -39,7 +37,7 @@ fn remove_attribute(args: &Args, map: &mut IndexMap<String, Value>, c_success: &
 // Enters the subdir and removes the attribute.
 fn enter_subdir_and_delete(
     subdir_path: &PathBuf,
-    args: &Args,
+    value: &str,
     c_success: &mut i32,
     c_failed: &mut i32,
     v_failed: &mut Vec<String>,
@@ -70,7 +68,7 @@ fn enter_subdir_and_delete(
                         let mut map: IndexMap<String, Value> = serde_json::from_str(&contents)
                         .expect("Error: Failed to correctly read IndexMap of 'map.json', check for any last changes you made to any map!");
                         // remove attribute
-                        remove_attribute(args, &mut map, c_success);
+                        remove_attribute(value, &mut map, c_success);
                         // Overwrite changes to map.json
                         let modified_json = serde_json::to_string_pretty(&map).expect(
                             "Error: Failed to correctly deserialize IndexMap of 'map.json'.",
@@ -89,17 +87,17 @@ fn enter_subdir_and_delete(
 }
 
 // It searches for subdirectories in the maps folder and then uses 'enter_subdir_and_delete' to enter the subdirectory and deletes attributes.
-pub fn execute_ma(args: &Args) -> Result<(), Box<dyn std::error::Error>> {
+pub fn execute_ma(value: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut c_success = 0;
     let mut c_failed = 0;
     let mut v_failed: Vec<String> = vec![];
     let mut c_total_maps = 0;
 
-    let is_attribute = args.value.as_str() == "connections"
-        || args.value.as_str() == "object_events"
-        || args.value.as_str() == "bg_events"
-        || args.value.as_str() == "warp_events"
-        || args.value.as_str() == "coord_events";
+    let is_attribute = value == "connections"
+        || value == "object_events"
+        || value == "bg_events"
+        || value == "warp_events"
+        || value == "coord_events";
 
     if is_attribute {
         // Path of map folder where map.json is located.
@@ -109,7 +107,7 @@ pub fn execute_ma(args: &Args) -> Result<(), Box<dyn std::error::Error>> {
                 let subdir_path = entry?.path(); // Create path to subdir.
                 enter_subdir_and_delete(
                     &subdir_path,
-                    args,
+                    value,
                     &mut c_success,
                     &mut c_failed,
                     &mut v_failed,
