@@ -1,3 +1,5 @@
+#![allow(unused_variables)] // temp
+#![allow(unused_imports)]   // temp
 use std::path::{Path, PathBuf};
 use std::fs;
 
