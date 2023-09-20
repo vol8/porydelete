@@ -1,21 +1,39 @@
-// Modules
-mod args;
-mod del_attribute;
-mod del_map;
-mod filter;
-mod list;
-
 // Imports
-use args::Args;
 use clap::Parser;
-use filter::PdFilter;
+use porydelete::filter::PdFilter;
+use porydelete::*;
+
+// Arguments which need to be passed to the program.
+#[derive(Parser)]
+pub struct Args {
+    // Command to execute
+    pub command: String,
+    // Values to pass to the command
+    pub value: String,
+}
+
+impl Args {
+    pub fn other_case_command(&self) {
+        eprintln!(
+            "Command '{}' is not an available command. Use '--help' for more information.",
+            self.command
+        );
+    }
+
+    pub fn other_case_value(&self) {
+        eprintln!(
+            "Value '{}' is not an available command. Use '--help' for more information.",
+            self.command
+        );
+    }
+}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Parse arguments
     let args = Args::parse();
     // Create a filter
     let attr_filer = filter::MaFilter {
-        elem: &args,
+        elem: args.value.clone(),
         start_dir: String::from("./data/maps"),
         dest_dir: String::from("./data/maps/porydelete-filter"),
     };
@@ -23,9 +41,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Run command
     match args.command.as_str() {
         // Delete an attribute
-        "attr" => del_attribute::execute_ma(&args),
+        "attr" => del_attribute::execute_del(&args.value),
         // Delete a map
-        "map" => Ok(()),
+        "map" => del_map::execute_del(&args.value),
         // Delete a tileset
         "tileset" => Ok(()),
         // Delete a script
@@ -35,7 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Delete an item
         "item" => Ok(()),
         // List an object
-        "list" => list::list_for_value(&args),
+        "list" => list::list_for_value(&args.command, &args.value),
         // Filter command for attributes feature
         "attr-fil" => Ok(attr_filer.do_filter()),
         // Defilter command for attributes feature

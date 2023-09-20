@@ -1,8 +1,11 @@
-use crate::args::Args;
-
-pub fn list_for_value(args: &Args) -> Result<(), Box<dyn std::error::Error>> {
-    match args.value.as_str() {
+pub fn list_for_value(command: &str, value: &str) -> Result<(), Box<dyn std::error::Error>> {
+    match value {
         "script" => Ok(()),
-        _ => Ok(args.other_case_value()),
+        _ => {
+            eprintln!(
+                "Value '{command}' is not an available command. Use '--help' for more information.",
+            );
+            Ok(())
+        }
     }
 }
