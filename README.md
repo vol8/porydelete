@@ -62,4 +62,4 @@ Important is that you can only delete maps created by porymap!  \
 \
 Examples: \
   `./porydelete map MyNewTown`\
-  `./porydelete map LittlerootTown`\
+  `./porydelete map LittlerootTown`
