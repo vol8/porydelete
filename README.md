@@ -10,20 +10,19 @@ I am working on this project because:
 
 # State of development
 
-First Release available! 1.0! Now you can safely delete Map-Attributes and filter/defilter maps (see [Map-Attributes and Filtering/Defiltering](https://github.com/Voluptua/porydelete#map-attributes-and-filteringdefiltering)) which you don't want to be edited! Why is that good? Well, maybe you stumbled across this tool after you started editing maps, so you don't want them to be edited. If you come across any bugs please file an issue here: [File an Issue](https://github.com/Voluptua/porydelete/issues) (Remember that my code maybe isn't perfect because I am not good at coding generally, but I tried to do proper error handling and I tried to document as much as possible so that other people like YOU can contribute!)
+Second Release available! 0.2.0! Now you can delete Maps created with porymap. Important is that other maps may use the map you want to delete, such as for connections. This can cause errors so you have to delete them manually.
 
 # Features
 
 | Feature | Works? | Fully added?| When?
 |---------|--------|--------|------|
 |Delete Map-Attributes|✅|✅|0.1.0 
-|Delete Maps|❌|❌|0.2.0
+|Delete Maps|✅|❌|0.2.0
 |Delete Map-Tilesets|❌| ❌|0.3.0
 |List Scripts|❌|❌|0.4.0
 |Delete Scripts|❌|❌|0.4.0
 |Delete Pokemon|❌|❌|0.5.0
 |Delete Items|❌|❌|0.6.0
-
 
 
 # Getting started
@@ -54,3 +53,13 @@ Examples: \
   `./porydelete attr-fil MyNewTown`\
   `./porydelete attr connections`\
   `./porydelete attr-defil MyNewTown`
+
+## Map Deletion:
+
+This is how you delete Maps:\
+```./porydelete map MyMap```\
+Important is that you can only delete maps created by porymap!  \
+\
+Examples: \
+  `./porydelete map MyNewTown`\
+  `./porydelete map LittlerootTown`\
