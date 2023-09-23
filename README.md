@@ -31,12 +31,12 @@ Follow these instructions to build this project: [INSTALL.md](https://github.com
 Then place `porydelete` into the root of your project. \
 Run `./porydelete --help` for more information.
 
-## Map-Attributes and Filtering/Defiltering:
+## Map attributes and filtering/defiltering:
 
-This is how you delete Map-Attributes:\
+Deletion of map attributes:\
 ```./porydelete attr <attribute>```\
 \
-This is how to filter/defilter Maps:\
+This is how to filter/defilter maps:\
 ```./porydelete attr-fil <mapname>```\
 ```./porydelete attr-defil <mapname>```\
 \
@@ -56,9 +56,9 @@ Examples: \
 
 ## Map Deletion:
 
-This is how you delete Maps:\
+Important: Only maps created by porymap can be deleted. Use this command:\
 ```./porydelete map MyMap```\
-Important is that you can only delete maps created by porymap!  \
+ \
 \
 Examples: \
   `./porydelete map MyNewTown`\
