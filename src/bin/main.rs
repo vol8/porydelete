@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Parse arguments
     let args = Args::parse();
     // Create a filter
-    let attr_filer = filter::MaFilter {
+    let attr_filter = filter::MaFilter {
         elem: args.value.clone(),
         start_dir: String::from("./data/maps"),
         dest_dir: String::from("./data/maps/porydelete-filter"),
@@ -55,9 +55,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // List an object
         "list" => list::list_for_value(&args.command, &args.value),
         // Filter command for attributes feature
-        "attr-fil" => Ok(attr_filer.do_filter()),
+        "attr-fil" => Ok(attr_filter.do_filter()),
         // Defilter command for attributes feature
-        "attr-defil" => Ok(attr_filer.do_defilter()),
+        "attr-defil" => Ok(attr_filter.do_defilter()),
+        // Check command, to check if any files are missing
+        // e.g.: ./porydelete check map
+        // Success: Every map has no missin files!
+        "check" => check::check(&args.value),
         // other cases
         _ => Ok(args.other_case_command()),
     }
