@@ -17,7 +17,6 @@ Second Release available! 0.2.0! Now you can delete Maps created with porymap. I
 | Feature | Works? | Fully added?| When?
 |---------|--------|--------|------|
 |List|❌|❌|Anytime
-|Check|❌|❌|Anytime
 |Delete Map-Attributes|✅|✅|0.1.0 
 |Delete Maps|✅|❌|0.2.0
 |Delete Map-Tilesets|❌| ❌|0.3.0
