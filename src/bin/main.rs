@@ -1,3 +1,5 @@
+use std::path::Path;
+
 // Imports
 use clap::Parser;
 use porydelete::filter::PdFilter;
@@ -31,6 +33,7 @@ impl Args {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Parse arguments
     let args = Args::parse();
+    let location_check_path = Path::new("./data");
     // Create a filter
     let attr_filter = filter::MaFilter {
         elem: args.value.clone(),
@@ -38,6 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         dest_dir: String::from("./data/maps/porydelete-filter"),
     };
 
+    if location_check_path.exists() {
     // Run command
     match args.command.as_str() {
         // Delete an attribute
@@ -45,7 +49,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Delete a map
         "map" => del_map::execute_del(&args.value),
         // Delete a tileset
-        "tileset" => Ok(()),
+        "tileset" => del_tileset::execute_del(&args.value),
         // Delete a script
         "script" => Ok(()),
         // Delete a pokemon
@@ -60,5 +64,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "attr-defil" => Ok(attr_filter.do_defilter()),
         // other cases
         _ => Ok(args.other_case_command()),
+        }
+    } else {
+        println!("Fatal Error: This executable is not located in the root of any 3rd generation decompilation projects!");
+        Ok(())
     }
 }
