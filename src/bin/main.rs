@@ -58,10 +58,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "attr-fil" => Ok(attr_filter.do_filter()),
         // Defilter command for attributes feature
         "attr-defil" => Ok(attr_filter.do_defilter()),
-        // Check command, to check if any files are missing
-        // e.g.: ./porydelete check map
-        // Success: Every map has no missin files!
-        "check" => check::check(&args.value),
         // other cases
         _ => Ok(args.other_case_command()),
     }

@@ -117,7 +117,6 @@ fn remove_layouts_map_object(path: PathBuf, layout_name: String) -> PdError {
     Ok(())
 }
 
-
 // Could be better but it works for now
 fn remove_map_groups_map_name(path: PathBuf, name: String) -> PdError {
     if path.is_file() {
