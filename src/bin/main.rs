@@ -53,7 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Delete an item
         "item" => Ok(()),
         // List an object
-        "list" => list::list_for_value(&args.command, &args.value),
+        "list" => Ok(()),
         // Filter command for attributes feature
         "attr-fil" => Ok(attr_filter.do_filter()),
         // Defilter command for attributes feature
