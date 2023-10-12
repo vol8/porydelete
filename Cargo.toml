@@ -1,6 +1,6 @@
 [package]
 name = "porydelete"
-version = "2.0.1"
+version = "0.2.1"
 edition = "2021"
 description = "About Porydelete is a CLI tool which allows you to delete specific parts of the 3.gen decomp projects such as Pokemon, Items, Maps, Tilesets, Events and more"
 license-file = "LICENSE"
