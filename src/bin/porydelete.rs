@@ -42,28 +42,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     if location_check_path.exists() {
-    // Run command
-    match args.command.as_str() {
-        // Delete an attribute
-        "attr" => del_attribute::execute_del(&args.value),
-        // Delete a map
-        "map" => del_map::execute_del(&args.value),
-        // Delete a tileset
-        "tileset" => del_tileset::execute_del(&args.value),
-        // Delete a script
-        "script" => Ok(()),
-        // Delete a pokemon
-        "pkmn" => Ok(()),
-        // Delete an item
-        "item" => Ok(()),
-        // List an object
-        "list" => list::list_for_value(&args.command, &args.value),
-        // Filter command for attributes feature
-        "attr-fil" => Ok(attr_filter.do_filter()),
-        // Defilter command for attributes feature
-        "attr-defil" => Ok(attr_filter.do_defilter()),
-        // other cases
-        _ => Ok(args.other_case_command()),
+        // Run command
+        match args.command.as_str() {
+            // Delete an attribute
+            "attr" => del_attribute::execute_del(&args.value),
+            // Delete a map
+            "map" => del_map::execute_del(&args.value),
+            // Delete a tileset
+            "tileset" => del_tileset::execute_del(&args.value),
+            // Delete a script
+            "script" => Ok(()),
+            // Delete a pokemon
+            "pkmn" => Ok(()),
+            // Delete an item
+            "item" => Ok(()),
+            // List an object
+            "list" => list::list_for_value(&args.command, &args.value),
+            // Filter command for attributes feature
+            "attr-fil" => Ok(attr_filter.do_filter()),
+            // Defilter command for attributes feature
+            "attr-defil" => Ok(attr_filter.do_defilter()),
+            // other cases
+            _ => Ok(args.other_case_command()),
         }
     } else {
         println!("Fatal Error: This executable is not located in the root of any 3rd generation decompilation projects!");
