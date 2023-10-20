@@ -3,9 +3,9 @@
 
 #![allow(unused_variables)]
 
-use std::path::{Path, PathBuf};
 use regex::Regex;
 use std::fs;
+use std::path::{Path, PathBuf};
 
 type PdError = Result<(), Box<dyn std::error::Error>>;
 
@@ -59,7 +59,9 @@ fn remove_tileset_def(ts_name: &str) -> PdError {
     let tileset_def = re.find(&contents);
 
     if tileset_def.is_none() {
-        eprintln!("Step 1: Error: Couldn't find tileset definition in './src/data/tilesets/headers.h'.");
+        eprintln!(
+            "Step 1: Error: Couldn't find tileset definition in './src/data/tilesets/headers.h'."
+        );
         Ok(())
     } else {
         let new = contents.replace(tileset_def.unwrap().as_str(), "");
@@ -71,18 +73,23 @@ fn remove_tileset_def(ts_name: &str) -> PdError {
 
 fn remove_tiles_pal_def(ts_name: &str) -> PdError {
     let re_tiles_prefix = "const u32 ";
-    let re_tiles_suffix = "\\[\\] = INCBIN_U32\\(\"data\\/tilesets\\/\\w+\\/\\w+\\/tiles.4bpp.lz\"\\);";
+    let re_tiles_suffix =
+        "\\[\\] = INCBIN_U32\\(\"data\\/tilesets\\/\\w+\\/\\w+\\/tiles\\.4bpp\\.lz\"\\);";
 
     let re_pals_prefix = "const u16 ";
-    let re_pals_suffix = "\\[\\]\\[16] =\\n\\{\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/00.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/01.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/02.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/03.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/04.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/05.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/06.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/07.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/08.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/09.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/10.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/11.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/12.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/13.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/14.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/15.gbapal\"\\),\\n\\};";
+    let re_pals_suffix = "\\[\\]\\[16\\] =\\n\\{\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/00\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/01\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/02\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/03\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/04\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/05\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/06\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/07\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/08\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/09\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/10\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/11\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/12\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/13\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/14\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/15\\.gbapal\"\\),\\n\\};";
 
     // Names for the tileset you specified
     let def_name_tiles = ts_name.replace("gTileset", "gTilesetTiles");
     let def_name_pals = ts_name.replace("gTileset", "gTilesetPalettes");
 
     // Regular expressions
-    let re_tiles = Regex::new(format!("{}{}{}", re_tiles_prefix, def_name_tiles, re_tiles_suffix).as_str()).unwrap();
-    let re_pals  = Regex::new(format!("{}{}{}", re_pals_prefix, def_name_pals, re_pals_suffix).as_str()).unwrap();
+    let re_tiles =
+        Regex::new(format!("{}{}{}", re_tiles_prefix, def_name_tiles, re_tiles_suffix).as_str())
+            .unwrap();
+    let re_pals =
+        Regex::new(format!("{}{}{}", re_pals_prefix, def_name_pals, re_pals_suffix).as_str())
+            .unwrap();
     let path = Path::new("src/data/tilesets/graphics.h").to_path_buf();
 
     let contents = fs::read_to_string(&path).unwrap();
@@ -94,19 +101,83 @@ fn remove_tiles_pal_def(ts_name: &str) -> PdError {
         eprintln!("Step 2: Error: Couldn't find tileset gfx and palettes gfx definitions in './src/data/tilesets/graphics.h'.");
         Ok(())
     } else {
-        let new = contents.replace(pals_def.unwrap().as_str(), "").replace(tiles_def.unwrap().as_str(), "");
+        let new = contents
+            .replace(pals_def.unwrap().as_str(), "")
+            .replace(tiles_def.unwrap().as_str(), "");
         fs::write(path, new)?;
         println!("Step 2: Found and deleted tileset gfx and palettes gfx definitions!");
         Ok(())
     }
 }
 
+fn remove_metatiles_def(ts_name: &str) -> PdError {
+    let def_name_metatiles = ts_name.replace("gTileset", "gMetatiles");
+    let def_name_metatiles_attr = ts_name.replace("gTileset", "gMetatileAttributes");
+
+    let prefix = "const u16 ";
+    let suffix = "\\[\\] = INCBIN_U16\\(\"\\w+\\/\\w+\\/\\w+\\/\\w+\\/\\w+.\\w+\"\\);";
+
+    let re_metatiles =
+        Regex::new(format!("{}{}{}", prefix, def_name_metatiles, suffix).as_str()).unwrap();
+    let re_metatiles_attr =
+        Regex::new(format!("{}{}{}", prefix, def_name_metatiles_attr, suffix).as_str()).unwrap();
+
+    let path = Path::new("./src/data/tilesets/metatiles.h").to_path_buf();
+    let contents = fs::read_to_string(&path).unwrap();
+
+    let found_metatiles = re_metatiles.find(&contents);
+    let found_metatiles_attr = re_metatiles_attr.find(&contents);
+
+    if found_metatiles.is_none() || found_metatiles_attr.is_none() {
+        eprintln!("Step 3: Error: Couldn't find metatile and metatile attribute definitions in 'src/data/tilesets/metatiles.h'.");
+        Ok(())
+    } else {
+        let new = contents
+            .replace(found_metatiles.unwrap().as_str(), "")
+            .replace(found_metatiles_attr.unwrap().as_str(), "");
+        fs::write(path, new)?;
+        println!("Step 3: Found and deleted metatile and metatile attribute definitions!");
+        Ok(())
+    }
+}
+
+fn remove_folder(ts_name: &str) -> PdError {
+    let dir_name = ts_name.replace("gTileset_", "/").to_lowercase();
+    let path_primary =
+        Path::new(format!("./data/tilesets/primary{}", dir_name).as_str()).to_path_buf();
+    let path_secondary =
+        Path::new(format!("./data/tilesets/secondary{}", dir_name).as_str()).to_path_buf();
+
+    if path_primary.exists() {
+        fs::remove_dir_all(&path_primary)?;
+        if !path_primary.exists() {
+            println!(
+                "Step 4: Removed tileset directory '{}'.",
+                path_primary.display()
+            );
+        }
+    } else if path_secondary.exists() {
+        fs::remove_dir_all(&path_secondary)?;
+        if !path_secondary.exists() {
+            println!(
+                "Step 4: Removed tileset directory '{}'.",
+                path_secondary.display()
+            );
+        }
+    } else {
+        println!("Step 4: Something went wrong!?");
+    }
+    Ok(())
+}
+
 pub fn execute_del(ts_name: &str) -> PdError {
     //let ts_exists: bool = tileset_exists(ts_name);
 
     //if ts_exists {
-        remove_tileset_def(ts_name)?; // Finished 'Step 1'
-        remove_tiles_pal_def(ts_name)?; // Finished 'Step 2'
-    //}
+    remove_tileset_def(ts_name)?; // Finished 'Step 1'
+    remove_tiles_pal_def(ts_name)?; // Finished 'Step 2'
+    remove_metatiles_def(ts_name)?; // Finished 'Step 3'
+    remove_folder(ts_name)?; // 'Step 4' is buggy
+                             //}
     Ok(())
 }
