@@ -77,7 +77,7 @@ fn remove_tiles_pal_def(ts_name: &str) -> PdError {
         "\\[\\] = INCBIN_U32\\(\"data\\/tilesets\\/\\w+\\/\\w+\\/tiles\\.4bpp\\.lz\"\\);";
 
     let re_pals_prefix = "const u16 ";
-    let re_pals_suffix = "\\[\\]\\[16\\] =\\n\\{\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/00\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/01\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/02\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/03\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/04\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/05\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/06\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/07\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/08\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/09\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/10\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/11\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/12\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/13\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/14\\.gbapal\"\\),\\n\\tINCBIN_U16\\(\"\\w+\\/tilesets\\/\\w+\\/\\w+\\/palettes\\/15\\.gbapal\"\\),\\n\\};";
+    let re_pals_suffix = r#"\[\]\[16\] =\s*\{(?:\s*\n\s*INCBIN_U16\("data/tilesets/\w+/\w+/palettes/\d{2}\.gbapal"\),)*\s*\};"#;
 
     // Names for the tileset you specified
     let def_name_tiles = ts_name.replace("gTileset", "gTilesetTiles");
@@ -172,12 +172,16 @@ fn remove_folder(ts_name: &str) -> PdError {
 
 pub fn execute_del(ts_name: &str) -> PdError {
     //let ts_exists: bool = tileset_exists(ts_name);
-
-    //if ts_exists {
-    remove_tileset_def(ts_name)?; // Finished 'Step 1'
-    remove_tiles_pal_def(ts_name)?; // Finished 'Step 2'
-    remove_metatiles_def(ts_name)?; // Finished 'Step 3'
-    remove_folder(ts_name)?; // 'Step 4' is buggy
-                             //}
-    Ok(())
+    if ts_name == "gTileset_General" {
+        eprintln!("Sorry: Can't delete 'gTileset_General'. Instead, try to reuse it, by using Porytiles: https://github.com/grunt-lucas/porytiles");
+        Ok(())
+    } else {
+        //if ts_exists {
+        remove_tileset_def(ts_name)?; // Finished 'Step 1'
+        remove_tiles_pal_def(ts_name)?; // Finished 'Step 2'
+        remove_metatiles_def(ts_name)?; // Finished 'Step 3'
+        remove_folder(ts_name)?; // Finished 'Step 4'
+                                 //}
+        Ok(())
+    }
 }

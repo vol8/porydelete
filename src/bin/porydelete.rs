@@ -50,6 +50,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "map" => del_map::execute_del(&args.value),
             // Delete a tileset
             "tileset" => del_tileset::execute_del(&args.value),
+            // Delete tileset animations seperatly.
+            "tileset-anims" => Ok(()),
             // Delete a script
             "script" => Ok(()),
             // Delete a pokemon
