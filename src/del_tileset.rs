@@ -170,6 +170,30 @@ fn remove_folder(ts_name: &str) -> PdError {
     Ok(())
 }
 
+fn dlanims_init_tileset_anim(ts_name: &str) {
+    let header_path = Path::new("./include/tileset_anims.h");
+    let source_path = Path::new("./src/tileset_anims.c");
+
+    let fn_name = ts_name.replace("gTileset", "InitTilesetAnim");
+
+    let header_regex = Regex::new(format!(r"\w+ {}\(\w+\);", fn_name).as_str()).unwrap();
+    // Have to properly create this regex duuhhhh 
+    //let source_regex = Regex::new(r"\w+\s*" + r"\(\w+\)\n\{\n(\s*\w+\s*=\s*\w+;)*\n}");
+    
+    let header_contents = fs::read_to_string(header_path).unwrap();
+    let source_contents = fs::read_to_string(source_path);
+
+    let header_match = header_regex.find(&header_contents).unwrap();
+    // let source_match = source_regex.find(&source_contents).unwrap();
+
+    // todo: continue with the removal, by rewriting the file
+}
+
+fn remove_animations(ts_name: &str) -> PdError {
+    dlanims_init_tileset_anim(ts_name);
+    Ok(())
+}
+
 pub fn execute_del(ts_name: &str) -> PdError {
     //let ts_exists: bool = tileset_exists(ts_name);
     if ts_name == "gTileset_General" {
