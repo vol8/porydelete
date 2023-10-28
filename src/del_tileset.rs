@@ -171,22 +171,38 @@ fn remove_folder(ts_name: &str) -> PdError {
 }
 
 fn dlanims_init_tileset_anim(ts_name: &str) {
-    let header_path = Path::new("./include/tileset_anims.h");
-    let source_path = Path::new("./src/tileset_anims.c");
-
     let fn_name = ts_name.replace("gTileset", "InitTilesetAnim");
 
     let header_regex = Regex::new(format!(r"\w+ {}\(\w+\);", fn_name).as_str()).unwrap();
-    // Have to properly create this regex duuhhhh 
-    //let source_regex = Regex::new(r"\w+\s*" + r"\(\w+\)\n\{\n(\s*\w+\s*=\s*\w+;)*\n}");
+    let src_re_suffix = r"\(\w+\)\n\{\n(\s*\w+\s*=\s*\w+;)*\n}";
+    let source_regex = Regex::new(format!(r"\w+\s*{}{}", fn_name, src_re_suffix).as_str()).unwrap();
     
-    let header_contents = fs::read_to_string(header_path).unwrap();
-    let source_contents = fs::read_to_string(source_path);
+    let header_contents = fs::read_to_string("./include/tileset_anims.h").unwrap();
+    let source_contents = fs::read_to_string("./src/tileset_anims.c").unwrap();
 
-    let header_match = header_regex.find(&header_contents).unwrap();
-    // let source_match = source_regex.find(&source_contents).unwrap();
+    let header_match = header_regex.find(&header_contents);
+    let source_match = source_regex.find(&source_contents);
 
-    // todo: continue with the removal, by rewriting the file
+    //println!("{}\n\n", source_regex);
+
+    if header_match.is_none() {
+        eprintln!("Error: Can't find '{}' in './include/tileset_anims.h'", fn_name);
+    } else {
+        let header_new = header_contents.replace(header_match.unwrap().as_str(), ""); 
+        match fs::write("./include/tileset_anims.h", header_new) {
+            Ok(o) => println!("Step 5.1: Deleted '{}' in './include/tileset_anims.h'", fn_name),
+            Err(e) => eprintln!("Fatal Error: Failed to write to './include/tileset_anims.h'"),
+        }
+    }
+    if source_match.is_none() {
+        eprintln!("Error: Can't find '{}' in './src/tileset_anims.c'", fn_name);
+    } else {
+        let source_new = source_contents.replace(source_match.unwrap().as_str(), "");
+        match fs::write("./src/tileset_anims.c", source_new) {
+            Ok(o) => println!("Step 5.2: Deleted '{}' in './src/tileset_anims.c", fn_name),
+            Err(e) => eprintln!("Fatal Error: Failed to write to '/src/tileset_anims.c'"),
+        }
+    }
 }
 
 fn remove_animations(ts_name: &str) -> PdError {
@@ -196,16 +212,22 @@ fn remove_animations(ts_name: &str) -> PdError {
 
 pub fn execute_del(ts_name: &str) -> PdError {
     //let ts_exists: bool = tileset_exists(ts_name);
+
+    let do_test = false;
+
     if ts_name == "gTileset_General" {
         eprintln!("Sorry: Can't delete 'gTileset_General'. Instead, try to reuse it, by using Porytiles: https://github.com/grunt-lucas/porytiles");
         Ok(())
-    } else {
+    } else if !do_test {
         //if ts_exists {
         remove_tileset_def(ts_name)?; // Finished 'Step 1'
         remove_tiles_pal_def(ts_name)?; // Finished 'Step 2'
         remove_metatiles_def(ts_name)?; // Finished 'Step 3'
         remove_folder(ts_name)?; // Finished 'Step 4'
                                  //}
+        Ok(())
+    } else {
+        dlanims_init_tileset_anim(ts_name);
         Ok(())
     }
 }
