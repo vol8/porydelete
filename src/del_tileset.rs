@@ -3,6 +3,7 @@
 
 #![allow(unused_variables)]
 
+pub mod del_anim;
 use regex::Regex;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -48,8 +49,8 @@ fn tileset_exists(ts_name: &str) -> bool {
 }
 
 fn remove_tileset_def(ts_name: &str) -> PdError {
-    let re_prefix = r"const struct Tileset ";
-    let re_suffix = r" =\n\{\n    .isCompressed = \w+,\n    .isSecondary = \w+,\n    .tiles = \w+,\n    .palettes = \w+,\n    .metatiles = \w+,\n    .metatileAttributes = \w+,\n    .callback = \w+,\n\};";
+    let re_prefix = r"const\s*struct\s*Tileset\s*";
+    let re_suffix = r"\s*=\n\{\n\s*.isCompressed\s*=\s*\w+,\n\s*.isSecondary\s*=\s*\w+,\n\s*.tiles\s*=\s*\w+,\n\s*.palettes\s*=\s*\w+,\n\s*.metatiles\s*=\s*\w+,\n\s*.metatileAttributes\s*=\s*\w+,\n\s*.callback\s*=\s*\w+,\n\};";
 
     let re = Regex::new(format!(r"{}{}{}", re_prefix, ts_name, re_suffix).as_str()).unwrap();
     let path = Path::new("./src/data/tilesets/headers.h").to_path_buf();
@@ -72,9 +73,9 @@ fn remove_tileset_def(ts_name: &str) -> PdError {
 }
 
 fn remove_tiles_pal_def(ts_name: &str) -> PdError {
-    let re_tiles_prefix = "const u32 ";
+    let re_tiles_prefix = "const\\s*u32\\s*";
     let re_tiles_suffix =
-        "\\[\\] = INCBIN_U32\\(\"data\\/tilesets\\/\\w+\\/\\w+\\/tiles\\.4bpp\\.lz\"\\);";
+        "\\s*\\[\\]\\s*=\\s*INCBIN_U32\\(\"data\\/tilesets\\/\\w+\\/\\w+\\/tiles\\.4bpp\\.lz\"\\);";
 
     let re_pals_prefix = "const u16 ";
     let re_pals_suffix = r#"\[\]\[16\] =\s*\{(?:\s*\n\s*INCBIN_U16\("data/tilesets/\w+/\w+/palettes/\d{2}\.gbapal"\),)*\s*\};"#;
@@ -114,8 +115,8 @@ fn remove_metatiles_def(ts_name: &str) -> PdError {
     let def_name_metatiles = ts_name.replace("gTileset", "gMetatiles");
     let def_name_metatiles_attr = ts_name.replace("gTileset", "gMetatileAttributes");
 
-    let prefix = "const u16 ";
-    let suffix = "\\[\\] = INCBIN_U16\\(\"\\w+\\/\\w+\\/\\w+\\/\\w+\\/\\w+.\\w+\"\\);";
+    let prefix = "const\\s*u16\\s*";
+    let suffix = "\\s*\\[\\]\\s*=\\s*INCBIN_U16\\(\"\\w+\\/\\w+\\/\\w+\\/\\w+\\/\\w+.\\w+\"\\);";
 
     let re_metatiles =
         Regex::new(format!("{}{}{}", prefix, def_name_metatiles, suffix).as_str()).unwrap();
@@ -170,46 +171,6 @@ fn remove_folder(ts_name: &str) -> PdError {
     Ok(())
 }
 
-fn dlanims_init_tileset_anim(ts_name: &str) {
-    let fn_name = ts_name.replace("gTileset", "InitTilesetAnim");
-
-    let header_regex = Regex::new(format!(r"\w+ {}\(\w+\);", fn_name).as_str()).unwrap();
-    let src_re_suffix = r"\(\w+\)\n\{\n(\s*\w+\s*=\s*\w+;)*\n}";
-    let source_regex = Regex::new(format!(r"\w+\s*{}{}", fn_name, src_re_suffix).as_str()).unwrap();
-    
-    let header_contents = fs::read_to_string("./include/tileset_anims.h").unwrap();
-    let source_contents = fs::read_to_string("./src/tileset_anims.c").unwrap();
-
-    let header_match = header_regex.find(&header_contents);
-    let source_match = source_regex.find(&source_contents);
-
-    //println!("{}\n\n", source_regex);
-
-    if header_match.is_none() {
-        eprintln!("Error: Can't find '{}' in './include/tileset_anims.h'", fn_name);
-    } else {
-        let header_new = header_contents.replace(header_match.unwrap().as_str(), ""); 
-        match fs::write("./include/tileset_anims.h", header_new) {
-            Ok(o) => println!("Step 5.1: Deleted '{}' in './include/tileset_anims.h'", fn_name),
-            Err(e) => eprintln!("Fatal Error: Failed to write to './include/tileset_anims.h'"),
-        }
-    }
-    if source_match.is_none() {
-        eprintln!("Error: Can't find '{}' in './src/tileset_anims.c'", fn_name);
-    } else {
-        let source_new = source_contents.replace(source_match.unwrap().as_str(), "");
-        match fs::write("./src/tileset_anims.c", source_new) {
-            Ok(o) => println!("Step 5.2: Deleted '{}' in './src/tileset_anims.c", fn_name),
-            Err(e) => eprintln!("Fatal Error: Failed to write to '/src/tileset_anims.c'"),
-        }
-    }
-}
-
-fn remove_animations(ts_name: &str) -> PdError {
-    dlanims_init_tileset_anim(ts_name);
-    Ok(())
-}
-
 pub fn execute_del(ts_name: &str) -> PdError {
     //let ts_exists: bool = tileset_exists(ts_name);
 
@@ -227,7 +188,7 @@ pub fn execute_del(ts_name: &str) -> PdError {
                                  //}
         Ok(())
     } else {
-        dlanims_init_tileset_anim(ts_name);
+        del_anim::execute_del(ts_name)?;
         Ok(())
     }
 }
