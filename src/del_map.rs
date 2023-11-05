@@ -7,72 +7,70 @@ use std::path::{Path, PathBuf};
 
 type PdError = Result<(), Box<dyn std::error::Error>>;
 
-fn map_exists(map: &str) -> bool {
-    let paths = get_paths(map);
-    for path in paths {
-        if !path.exists() {
-            eprintln!("Error: '{}' does not exist! Have you tried to delete this map on your own?\nCheck the spelling of the map again.", path.display());
-            return false;
-        }
-    }
-    true
-}
-
-fn get_str_to_be_del(map: &str) -> Vec<String> {
-    vec![
-        // Map name in ./data/maps/map_groups.json
-        String::from(map),
-        // Name attribute in ./data/layouts/layouts.json
-        String::from(map) + "_Layout",
-        // include in event_scripts.s
-        String::from(".include \"data/maps/") + map + "/scripts.inc\"",
-    ]
-}
-
 fn get_paths(map: &str) -> Vec<PathBuf> {
     vec![
         // Path to map folder
         Path::new("./data/maps/").to_path_buf().join(map),
-        // Path to 'map_groups.json'
-        Path::new("./data/maps/map_groups.json").to_path_buf(),
         // Path to map layouts folder
         Path::new("./data/layouts/").to_path_buf().join(map),
-        // Path to 'layouts.json'
-        Path::new("./data/layouts/layouts.json").to_path_buf(),
-        // Path to 'event_scripts.s'
-        Path::new("./data/event_scripts.s").to_path_buf(),
     ]
 }
 
-fn remove_dirs(map: PathBuf, layouts: PathBuf) -> PdError {
-    fs::remove_dir_all(map.clone())?;
-    if !map.exists() {
+fn map_exists(map: &str) -> bool {
+    let paths = get_paths(map);
+    let mut count = 0;
+    for path in paths {
+        if path.exists() {
+            count += 1;
+        }
+    }
+    if count == 2 {
+        return true;
+
+    } else if count == 0 {
+        eprintln!("Error: Couldn't find the map '{}'.", map);
+        return false;
+    } 
+    else {
+        eprintln!("Error: Some paths couldn't be found. Have you tried to delete a map manually?\nIf you never touched the map files before, except with Porydelete and/or Porymap, please file an issue on my github page.");
+        return false;
+    }
+    
+}
+
+fn remove_dirs(map_name: &str) -> PdError {
+    let map_path = Path::new("./data/maps/").to_path_buf().join(map_name);
+    let layout_path = Path::new("./data/layouts/").to_path_buf().join(map_name);
+    fs::remove_dir_all(map_path.clone())?;
+    if !map_path.exists() {
         println!(
             "Step 1: Map folder deleted! Folder directory '{}'",
-            map.display()
+            map_path.display()
         );
     } else {
-        eprintln!("Error: Failed to delete map folder '{}'", map.display());
+        eprintln!("Error: Failed to delete map folder '{}'", map_path.display());
     }
-    fs::remove_dir_all(layouts.clone())?;
-    if !layouts.exists() {
+    fs::remove_dir_all(layout_path.clone())?;
+    if !layout_path.exists() {
         println!(
             "Step 2: Map folder deleted! Folder directory '{}'",
-            layouts.display()
+            layout_path.display()
         );
     } else {
         eprintln!(
             "Error: Failed to delete layouts folder '{}'",
-            layouts.display()
+            layout_path.display()
         );
     }
     Ok(())
 }
 
-fn remove_include(path: PathBuf, string: String) -> PdError {
+fn remove_include(map_name: &str) -> PdError {
+    let string = String::from(".include \"data/maps/") + map_name + "/scripts.inc\"";
+    let path = Path::new("./data/event_scripts.s");
     if path.exists() {
         // logic: Reads file and the second line just writes the changes to the file. First line does contain error handling by '?'
-        let content = fs::read_to_string(path.clone())?.replace(&string, "");
+        let content = fs::read_to_string(path)?.replace(&string, "");
         fstream::write_text(path, content, true);
         println!("Step 3: Include file deleted!");
     }
@@ -80,7 +78,9 @@ fn remove_include(path: PathBuf, string: String) -> PdError {
 }
 
 // Could be better but it works for now
-fn remove_layouts_map_object(path: PathBuf, layout_name: String) -> PdError {
+fn remove_layouts_map_object(map: &str) -> PdError {
+    let path = Path::new("./data/layouts/layouts.json");
+    let layout_name = String::from(map) + "_Layout";
     if path.is_file() {
         if path.file_name().and_then(|n| n.to_str()) == Some("layouts.json") {
             let contents = fs::read_to_string(&path)?;
@@ -118,7 +118,9 @@ fn remove_layouts_map_object(path: PathBuf, layout_name: String) -> PdError {
 }
 
 // Could be better but it works for now
-fn remove_map_groups_map_name(path: PathBuf, name: String) -> PdError {
+fn remove_map_groups_map_name(map: &str) -> PdError {
+    let path = Path::new("./data/maps/map_groups.json").to_path_buf();
+    let name = map;
     if path.is_file() {
         if path.file_name().and_then(|n| n.to_str()) == Some("map_groups.json") {
             let contents = fs::read_to_string(&path)?;
@@ -128,7 +130,7 @@ fn remove_map_groups_map_name(path: PathBuf, name: String) -> PdError {
                 // Check if the array is an array and not null
                 if let Some(array) = array.as_array_mut() {
                     // Remove "Route123" from the array
-                    array.retain(|item| item != name.as_str());
+                    array.retain(|item| item != name);
                 }
                 let modified_json = serde_json::to_string_pretty(&map)
                     .expect("Error: failed to serialize map.json");
@@ -147,19 +149,16 @@ pub fn execute_del(map: &str) -> PdError {
     let map_exists = map_exists(map);
 
     if map_exists {
-        let strings = get_str_to_be_del(map);
-        let paths = get_paths(map);
         // Remove map folder and layouts folder
-        remove_dirs(paths[0].clone(), paths[2].clone())?;
+        remove_dirs(map)?;
         // Removes include line from event_scripts.s
-        remove_include(paths[4].clone(), strings[2].clone())?;
+        remove_include(map)?;
         // Removes the Map object (Could be better but it works for now)
-        remove_layouts_map_object(paths[3].clone(), strings[1].clone())?;
+        remove_layouts_map_object(map)?;
         // Removes the map-name from map-group object (Could be better but it works for now)
-        remove_map_groups_map_name(paths[1].clone(), strings[0].clone())?;
+        remove_map_groups_map_name(map)?;
         println!("Success: Deleted map '{}'.", map);
         println!("\nInportant Note: Other maps may use '{}' in their files. This can cause errors while compiling.\nMake sure to fix those errors!", map);
     }
-
     Ok(())
 }
