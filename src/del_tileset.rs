@@ -8,7 +8,8 @@ use regex::Regex;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-type PdError = Result<(), Box<dyn std::error::Error>>;
+type PdTsError = Result<(), Box<dyn std::error::Error>>;
+type PdTsErrorCaptures = Result<Vec<String>, Box<dyn std::error::Error>>;
 
 fn get_paths(ts_name: &str) -> Vec<PathBuf> {
     vec![
@@ -48,9 +49,9 @@ fn tileset_exists(ts_name: &str) -> bool {
     true
 }
 
-fn remove_tileset_def(ts_name: &str) -> PdError {
+fn remove_tileset_def(ts_name: &str) -> PdTsErrorCaptures {
     let re_prefix = r"const\s*struct\s*Tileset\s*";
-    let re_suffix = r"\s*=\n\{\n\s*.isCompressed\s*=\s*\w+,\n\s*.isSecondary\s*=\s*\w+,\n\s*.tiles\s*=\s*\w+,\n\s*.palettes\s*=\s*\w+,\n\s*.metatiles\s*=\s*\w+,\n\s*.metatileAttributes\s*=\s*\w+,\n\s*.callback\s*=\s*\w+,\n\};";
+    let re_suffix = r"\s*=\n\{\n\s*.isCompressed\s*=\s*\w+,\n\s*.isSecondary\s*=\s*\w+,\n\s*.tiles\s*=\s*(?P<tiles>\w+),\n\s*.palettes\s*=\s*(?P<pals>\w+),\n\s*.metatiles\s*=\s*(?P<metatiles>\w+),\n\s*.metatileAttributes\s*=\s*(?P<metatilesattr>\w+),\n\s*.callback\s*=\s*(?P<callback>\w+),\n\};";
 
     let re = Regex::new(format!(r"{}{}{}", re_prefix, ts_name, re_suffix).as_str()).unwrap();
     let path = Path::new("./src/data/tilesets/headers.h").to_path_buf();
@@ -63,16 +64,26 @@ fn remove_tileset_def(ts_name: &str) -> PdError {
         eprintln!(
             "Step 1: Error: Couldn't find tileset definition in './src/data/tilesets/headers.h'."
         );
-        Ok(())
+        Ok(vec![])
     } else {
         let new = contents.replace(tileset_def.unwrap().as_str(), "");
         fs::write(path, new)?;
+
+        let mut captures: Vec<String> = vec![];
+        if let Some(cap) = re.captures(&contents) {
+            captures.push(cap.name("tiles").unwrap().as_str().to_string());
+            captures.push(cap.name("pals").unwrap().as_str().to_string());
+            captures.push(cap.name("metatiles").unwrap().as_str().to_string());
+            captures.push(cap.name("metatilesattr").unwrap().as_str().to_string());
+            captures.push(cap.name("callback").unwrap().as_str().to_string());
+        }
+
         println!("Step 1: Found and deleted tileset definition!");
-        Ok(())
+        Ok(captures)
     }
 }
 
-fn remove_tiles_pal_def(ts_name: &str) -> PdError {
+fn remove_tiles_pal_def(fn_tile_name: &str, fn_pals_name: &str) -> PdTsError {
     let re_tiles_prefix = "const\\s*u32\\s*";
     let re_tiles_suffix =
         "\\s*\\[\\]\\s*=\\s*INCBIN_U32\\(\"data\\/tilesets\\/\\w+\\/\\w+\\/tiles\\.4bpp\\.lz\"\\);";
@@ -80,16 +91,12 @@ fn remove_tiles_pal_def(ts_name: &str) -> PdError {
     let re_pals_prefix = "const u16 ";
     let re_pals_suffix = r#"\[\]\[16\] =\s*\{(?:\s*\n\s*INCBIN_U16\("data/tilesets/\w+/\w+/palettes/\d{2}\.gbapal"\),)*\s*\};"#;
 
-    // Names for the tileset you specified
-    let def_name_tiles = ts_name.replace("gTileset", "gTilesetTiles");
-    let def_name_pals = ts_name.replace("gTileset", "gTilesetPalettes");
-
     // Regular expressions
     let re_tiles =
-        Regex::new(format!("{}{}{}", re_tiles_prefix, def_name_tiles, re_tiles_suffix).as_str())
+        Regex::new(format!("{}{}{}", re_tiles_prefix, fn_tile_name, re_tiles_suffix).as_str())
             .unwrap();
     let re_pals =
-        Regex::new(format!("{}{}{}", re_pals_prefix, def_name_pals, re_pals_suffix).as_str())
+        Regex::new(format!("{}{}{}", re_pals_prefix, fn_pals_name, re_pals_suffix).as_str())
             .unwrap();
     let path = Path::new("src/data/tilesets/graphics.h").to_path_buf();
 
@@ -111,17 +118,15 @@ fn remove_tiles_pal_def(ts_name: &str) -> PdError {
     }
 }
 
-fn remove_metatiles_def(ts_name: &str) -> PdError {
-    let def_name_metatiles = ts_name.replace("gTileset", "gMetatiles");
-    let def_name_metatiles_attr = ts_name.replace("gTileset", "gMetatileAttributes");
+fn remove_metatiles_def(fn_metatiles_name: &str, fn_metatiles_attr_name: &str) -> PdTsError {
 
     let prefix = "const\\s*u16\\s*";
     let suffix = "\\s*\\[\\]\\s*=\\s*INCBIN_U16\\(\"\\w+\\/\\w+\\/\\w+\\/\\w+\\/\\w+.\\w+\"\\);";
 
     let re_metatiles =
-        Regex::new(format!("{}{}{}", prefix, def_name_metatiles, suffix).as_str()).unwrap();
+        Regex::new(format!("{}{}{}", prefix, fn_metatiles_name, suffix).as_str()).unwrap();
     let re_metatiles_attr =
-        Regex::new(format!("{}{}{}", prefix, def_name_metatiles_attr, suffix).as_str()).unwrap();
+        Regex::new(format!("{}{}{}", prefix, fn_metatiles_attr_name, suffix).as_str()).unwrap();
 
     let path = Path::new("./src/data/tilesets/metatiles.h").to_path_buf();
     let contents = fs::read_to_string(&path).unwrap();
@@ -142,7 +147,7 @@ fn remove_metatiles_def(ts_name: &str) -> PdError {
     }
 }
 
-fn remove_folder(ts_name: &str) -> PdError {
+fn remove_folder(ts_name: &str) -> PdTsError {
     let dir_name = ts_name.replace("gTileset_", "/").to_lowercase();
     let path_primary =
         Path::new(format!("./data/tilesets/primary{}", dir_name).as_str()).to_path_buf();
@@ -171,7 +176,7 @@ fn remove_folder(ts_name: &str) -> PdError {
     Ok(())
 }
 
-pub fn execute_del(ts_name: &str) -> PdError {
+pub fn execute_del(ts_name: &str) -> PdTsError {
     //let ts_exists: bool = tileset_exists(ts_name);
 
     let do_test = false;
@@ -181,9 +186,9 @@ pub fn execute_del(ts_name: &str) -> PdError {
         Ok(())
     } else if !do_test {
         //if ts_exists {
-        remove_tileset_def(ts_name)?; // Finished 'Step 1'
-        remove_tiles_pal_def(ts_name)?; // Finished 'Step 2'
-        remove_metatiles_def(ts_name)?; // Finished 'Step 3'
+        let captures = remove_tileset_def(ts_name)?; // Finished 'Step 1'
+        remove_tiles_pal_def(captures[0].as_str(), captures[1].as_str())?; // Finished 'Step 2'
+        remove_metatiles_def(captures[2].as_str(), captures[3].as_str())?; // Finished 'Step 3'
         remove_folder(ts_name)?; // Finished 'Step 4'
                                  //}
         Ok(())
