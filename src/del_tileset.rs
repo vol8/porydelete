@@ -7,6 +7,7 @@ pub mod del_anim;
 use regex::Regex;
 use std::fs;
 use std::path::{Path, PathBuf};
+use convert_case::{Case, Casing};
 
 type PdTsError = Result<(), Box<dyn std::error::Error>>;
 type PdTsErrorCaptures = Result<Vec<String>, Box<dyn std::error::Error>>;
@@ -148,11 +149,11 @@ fn remove_metatiles_def(fn_metatiles_name: &str, fn_metatiles_attr_name: &str) -
 }
 
 fn remove_folder(ts_name: &str) -> PdTsError {
-    let dir_name = ts_name.replace("gTileset_", "/").to_lowercase();
+    let dir_name = ts_name.replace("gTileset_", "").to_case(Case::Snake);
     let path_primary =
-        Path::new(format!("./data/tilesets/primary{}", dir_name).as_str()).to_path_buf();
+        Path::new(format!("./data/tilesets/primary/{}", dir_name).as_str()).to_path_buf();
     let path_secondary =
-        Path::new(format!("./data/tilesets/secondary{}", dir_name).as_str()).to_path_buf();
+        Path::new(format!("./data/tilesets/secondary/{}", dir_name).as_str()).to_path_buf();
 
     if path_primary.exists() {
         fs::remove_dir_all(&path_primary)?;
