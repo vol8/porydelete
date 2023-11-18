@@ -177,6 +177,8 @@ fn remove_folder(ts_name: &str) -> PdTsError {
     Ok(())
 }
 
+
+// IMPORTANT: Clean up this function if del_anims finished
 pub fn execute_del(ts_name: &str) -> PdTsError {
     //let ts_exists: bool = tileset_exists(ts_name);
 
