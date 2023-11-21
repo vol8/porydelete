@@ -7,7 +7,8 @@ type PdTsErrorCaptures = Result<Vec<String>, Box<dyn std::error::Error>>;
 
 const PATH_TILESET_ANIMS: &str = "./src/tileset_anims.c";
 
-fn fn_init_tileset_anim(ts_name: &str) {
+// In the wiki, this removes the first two code snippets in Step 6: https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
+fn remove_fn_init_tileset_anim(ts_name: &str) {
     let fn_name = ts_name.replace("gTileset", "InitTilesetAnim");
 
     let header_regex = Regex::new(format!(r"\w+\s*{}\(\w+\);", fn_name).as_str()).unwrap();
@@ -20,7 +21,6 @@ fn fn_init_tileset_anim(ts_name: &str) {
     let header_match = header_regex.find(&header_contents);
     let source_match = source_regex.find(&source_contents);
 
-    //println!("{}\n\n", source_regex);
 
     if header_match.is_none() {
         eprintln!("Error: Can't find '{}' in './include/tileset_anims.h'", fn_name);
@@ -43,7 +43,8 @@ fn fn_init_tileset_anim(ts_name: &str) {
 }
 
 // Todo: finish this function
-fn fn_tileset_anim(ts_name: &str) {
+// Removes code snippet 3 & 4 in Step 6 of the wiki: https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
+fn remove_fn_tileset_anim(ts_name: &str) {
     let fn_name = ts_name.replace("gTileset", "TilesetAnim");
 
     let re_dec = Regex::new(format!(r"static\s*void\s*{}\s*\(\w+\);", fn_name).as_str()).unwrap();
@@ -76,8 +77,7 @@ fn fn_tileset_anim(ts_name: &str) {
     }*/
 }
 
-// todo: write to the file
-fn fn_queue_anim_tiles_declaration(ts_name: &str) -> PdTsErrorCaptures {
+fn remove_fn_queue_anim_tiles_declaration(ts_name: &str) -> PdTsErrorCaptures {
     let mut fn_names: Vec<String> = vec![];
     let re = Regex::new(format!(r"static\s*void\s*(\w+{}\w+)\(\w+\);", ts_name.replace("gTileset_", "")).as_str()).unwrap();
     let contents = fs::read_to_string(PATH_TILESET_ANIMS).unwrap();
@@ -92,27 +92,35 @@ fn fn_queue_anim_tiles_declaration(ts_name: &str) -> PdTsErrorCaptures {
     if fn_names.is_empty() {
         Ok(vec![])
     } else {
+        fs::write(PATH_TILESET_ANIMS, contents)?;
         Ok(fn_names)
     }
 }
 
-fn fn_queue_anim_tiles_definition() {
+// todo
+fn remove_fn_queue_anim_tiles_definition(fn_names: Vec<String>) {
+    let re_suffix = "\\s*\\(\\w+\\s*\\w+\\)\\n\\{([^}]*)\\}";
+
+    for fn_name in fn_names {
+        let re = Regex::new(format!("\\w+\\s*\\w+\\s*{}{}", fn_name, re_suffix).as_str()).unwrap();
+    }
+    //println!("Not ready yet...");
+}
+
+// todo
+fn remove_tileset_anims_frame(ts_name: &str) {
     println!("Not ready yet...");
 }
 
-fn tileset_anims_frame(ts_name: &str) {
-    println!("Not ready yet...");
-}
-
-// Finish this function so that it checks if the fn_name vector is empty or not and then proceeds
 pub fn execute_del(ts_name: &str) -> PdError {
-    fn_init_tileset_anim(ts_name);
-    fn_tileset_anim(ts_name);
-    if let fn_names = !fn_queue_anim_tiles_declaration(ts_name).unwrap().is_empty() {
+    remove_fn_init_tileset_anim(ts_name);
+    remove_fn_tileset_anim(ts_name);
+    let fn_names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
+    if !fn_names.is_empty() {
         
-        fn_queue_anim_tiles_definition();
-        tileset_anims_frame(ts_name);
-    } else if let _ = !fn_queue_anim_tiles_declaration(ts_name).unwrap().is_empty() {
+        remove_fn_queue_anim_tiles_definition(fn_names);
+        remove_tileset_anims_frame(ts_name);
+    } else if fn_names.is_empty() {
         eprintln!("Error: Could't find any Queue animation functions!");
     }
     Ok(())
