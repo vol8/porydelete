@@ -4,14 +4,15 @@
 #![allow(unused_variables)]
 
 pub mod del_anim;
+use convert_case::{Case, Casing};
 use regex::Regex;
 use std::fs;
 use std::path::{Path, PathBuf};
-use convert_case::{Case, Casing};
 
 type PdTsError = Result<(), Box<dyn std::error::Error>>;
 type PdTsErrorCaptures = Result<Vec<String>, Box<dyn std::error::Error>>;
 
+// Todo: Finish and use this function
 fn get_paths(ts_name: &str) -> Vec<PathBuf> {
     vec![
         // tileset struct definition (for general and other tilesets)
@@ -38,6 +39,7 @@ fn get_paths(ts_name: &str) -> Vec<PathBuf> {
     ]
 }
 
+// Todo: Finish and use this function
 fn tileset_exists(ts_name: &str) -> bool {
     let paths = get_paths(ts_name);
 
@@ -120,7 +122,6 @@ fn remove_tiles_pal_def(fn_tile_name: &str, fn_pals_name: &str) -> PdTsError {
 }
 
 fn remove_metatiles_def(fn_metatiles_name: &str, fn_metatiles_attr_name: &str) -> PdTsError {
-
     let prefix = "const\\s*u16\\s*";
     let suffix = "\\s*\\[\\]\\s*=\\s*INCBIN_U16\\(\"\\w+\\/\\w+\\/\\w+\\/\\w+\\/\\w+.\\w+\"\\);";
 
@@ -177,26 +178,19 @@ fn remove_folder(ts_name: &str) -> PdTsError {
     Ok(())
 }
 
-
-// IMPORTANT: Clean up this function if del_anims finished
+// **************************************************
+// Note: Clean up this function if del_anims finished
+// **************************************************
+// Todo: If function 'get_paths' and 'tileset_exists' are finished, use them in here to check if the tileset the user wants to delete, already exists
 pub fn execute_del(ts_name: &str) -> PdTsError {
-    //let ts_exists: bool = tileset_exists(ts_name);
-
-    let do_test = false;
-
     if ts_name == "gTileset_General" {
         eprintln!("Sorry: Can't delete 'gTileset_General'. Instead, try to reuse it, by using Porytiles: https://github.com/grunt-lucas/porytiles");
         Ok(())
-    } else if !do_test {
-        //if ts_exists {
-        let captures = remove_tileset_def(ts_name)?; // Finished 'Step 1'
-        remove_tiles_pal_def(captures[0].as_str(), captures[1].as_str())?; // Finished 'Step 2'
-        remove_metatiles_def(captures[2].as_str(), captures[3].as_str())?; // Finished 'Step 3'
-        remove_folder(ts_name)?; // Finished 'Step 4'
-                                 //}
-        Ok(())
-    } else {
-        del_anim::execute_del(ts_name)?;
+    } else  {
+        let captures = remove_tileset_def(ts_name)?;
+        remove_tiles_pal_def(captures[0].as_str(), captures[1].as_str())?;
+        remove_metatiles_def(captures[2].as_str(), captures[3].as_str())?;
+        remove_folder(ts_name)?;
         Ok(())
     }
 }

@@ -26,16 +26,13 @@ fn map_exists(map: &str) -> bool {
     }
     if count == 2 {
         return true;
-
     } else if count == 0 {
         eprintln!("Error: Couldn't find the map '{}'.", map);
         return false;
-    } 
-    else {
+    } else {
         eprintln!("Error: Some paths couldn't be found. Have you tried to delete a map manually?\nIf you never touched the map files before, except with Porydelete and/or Porymap, please file an issue on my github page.");
         return false;
     }
-    
 }
 
 fn remove_dirs(map_name: &str) -> PdError {
@@ -48,7 +45,10 @@ fn remove_dirs(map_name: &str) -> PdError {
             map_path.display()
         );
     } else {
-        eprintln!("Error: Failed to delete map folder '{}'", map_path.display());
+        eprintln!(
+            "Error: Failed to delete map folder '{}'",
+            map_path.display()
+        );
     }
     fs::remove_dir_all(layout_path.clone())?;
     if !layout_path.exists() {
