@@ -100,7 +100,7 @@ fn remove_fn_queue_anim_tiles_declaration(ts_name: &str) -> PdTsErrorCaptures {
     let mut fn_names: Vec<String> = vec![];
     let re = Regex::new(
         format!(
-            r"static\s*void\s*(\w+{}\w+)\(\w+\);",
+            r"static\s*void\s*(QueueAnimTiles_{}_\w+)\(\w+\);",
             ts_name.replace("gTileset_", "")
         )
         .as_str(),
@@ -154,6 +154,22 @@ fn remove_fn_queue_anim_tiles_definition(fn_names: Vec<String>) -> PdError {
 // Todo: Create the function
 fn remove_tileset_anims_frame(ts_name: &str) {
     println!("Not ready yet...");
+}
+
+pub fn test_del(ts_name: &str) -> PdError {
+    //remove_fn_init_tileset_anim(ts_name);
+    //remove_fn_tileset_anim(ts_name);
+    let fn_names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
+    for names in fn_names {
+        println!("'{}' , ", names);
+    }
+    //if !fn_names.is_empty() {
+    //    remove_fn_queue_anim_tiles_definition(fn_names)?;
+    //    remove_tileset_anims_frame(ts_name);
+    //} else if fn_names.is_empty() {
+    //    eprintln!("Fatal Error: Anims. 3.2: Couldn't find any Queue-Animations-Tiles functions!");
+    //}
+    Ok(())
 }
 
 pub fn execute_del(ts_name: &str) -> PdError {

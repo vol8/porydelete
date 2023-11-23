@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "attr" => del_attribute::execute_del(&args.value),
             // Delete a map
             "map" => del_map::execute_del(&args.value),
-            // Delete a tileset
+            // Delete a tileset with its animations (if there are any)
             "tileset" => del_tileset::execute_del(&args.value),
             // Delete tileset animations seperatly.
             "tileset-anims" => del_tileset::del_anim::execute_del(&args.value),
@@ -64,6 +64,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "attr-fil" => Ok(attr_filter.do_filter()),
             // Defilter command for attributes feature
             "attr-defil" => Ok(attr_filter.do_defilter()),
+            // Testing
+            "test" => del_tileset::del_anim::test_del(&args.value),
             // other cases
             _ => Ok(args.other_case_command()),
         }
