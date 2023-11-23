@@ -9,3 +9,5 @@
 * Create and finish `fn remove_tileset_anims_frame`
 
 ## Make sure all functions work properly as they should
+
+## Remove test argument from `./src/bin/porydelete.rs`
