@@ -1,24 +1,19 @@
 # About
 
-Porydelete is a CLI tool which allows you to delete specific parts of the 3.gen decomp projects such as Pokemon, Items, Maps, Tilesets, Events and more. This is a project inspired by the `strip_events.py` script on my [pret-decomp-resources](https://github.com/Voluptua/pret-decomp-resources) repository. 
-
-I am working on this project because:
-  - I am not good at coding with Rust and I want to get better using this language
-  - I always wanted to create a romhacking Tool (even in the binary hacking times)
-  - I am also working on my own romhack and I want to save space by removing unused content in the final product such as unused Items or Tilesets
-
+Porydelete is a CLI tool which allows you to delete specific parts of the 3.gen decomp projects such as Pokemon, Items, Maps, Tilesets, Events and more. This allows ROM-hack creators to clean up their ROM(s).
 
 # State of development
 
-Second Release available! 0.2.0! Now you can delete Maps created with porymap. Important is that other maps may use the map you want to delete, such as for connections. This can cause errors so you have to delete them manually.
+For now, you can only edit pokeemerald. Porydelete currently only allows to clear Map-attributes, delete maps and maptilesets. I also want to create a list feature, with which you can see what items (*item refering to maps, tilesets, scripts, pokemon, etc.*) are registered by Porydelete.
 
 # Features
 
-| Feature | Works? | Fully added?| When?
+| Feature | Works? | Bugless?| When?
 |---------|--------|--------|------|
-|List|❌|❌|Anytime
-|Delete Map-Attributes|✅|✅|0.1.0 
-|Delete Maps|✅|❌|0.2.0
+|FRLG/RS Support|❌|❌|?
+|List|❌|❌|?
+|Clear Map-Attributes|✅|✅|0.1.0 
+|Delete Maps|✅|✅|0.2.0
 |Delete Map-Tilesets|❌| ❌|0.3.0
 |Delete Scripts|❌|❌|0.4.0
 |Delete Pokemon|❌|❌|0.5.0

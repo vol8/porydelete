@@ -186,7 +186,7 @@ pub fn execute_del(ts_name: &str) -> PdTsError {
     if ts_name == "gTileset_General" {
         eprintln!("Sorry: Can't delete 'gTileset_General'. Instead, try to reuse it, by using Porytiles: https://github.com/grunt-lucas/porytiles");
         Ok(())
-    } else  {
+    } else {
         let captures = remove_tileset_def(ts_name)?;
         remove_tiles_pal_def(captures[0].as_str(), captures[1].as_str())?;
         remove_metatiles_def(captures[2].as_str(), captures[3].as_str())?;

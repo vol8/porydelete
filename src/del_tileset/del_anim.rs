@@ -7,6 +7,7 @@ type PdTsErrorCaptures = Result<Vec<String>, Box<dyn std::error::Error>>;
 
 const PATH_TILESET_ANIMS: &str = "./src/tileset_anims.c";
 
+// DONE
 // In the wiki, this removes the first two code snippets in Step 6: https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
 fn remove_fn_init_tileset_anim(ts_name: &str) {
     let fn_name = ts_name.replace("gTileset", "InitTilesetAnim");
@@ -20,6 +21,21 @@ fn remove_fn_init_tileset_anim(ts_name: &str) {
 
     let header_match = header_regex.find(&header_contents);
     let source_match = source_regex.find(&source_contents);
+
+    if source_match.is_none() {
+        eprintln!("Error: Can't find '{}' in './src/tileset_anims.c'", fn_name);
+    } else {
+        let source_new = source_contents.replace(source_match.unwrap().as_str(), "");
+        match fs::write("./src/tileset_anims.c", source_new) {
+            Ok(o) => println!(
+                "Anims. 1.1: Deleted '{}' in '{}'",
+                fn_name, PATH_TILESET_ANIMS
+            ),
+            Err(e) => {
+                eprintln!("Fatal Error: Anims. 1.1: Failed to write to '/src/tileset_anims.c'")
+            }
+        }
+    }
 
     if header_match.is_none() {
         eprintln!(
@@ -38,39 +54,18 @@ fn remove_fn_init_tileset_anim(ts_name: &str) {
             }
         }
     }
-    if source_match.is_none() {
-        eprintln!("Error: Can't find '{}' in './src/tileset_anims.c'", fn_name);
-    } else {
-        let source_new = source_contents.replace(source_match.unwrap().as_str(), "");
-        match fs::write("./src/tileset_anims.c", source_new) {
-            Ok(o) => println!(
-                "Anims. 1.1: Deleted '{}' in '{}'",
-                fn_name, PATH_TILESET_ANIMS
-            ),
-            Err(e) => {
-                eprintln!("Fatal Error: Anims. 1.1: Failed to write to '/src/tileset_anims.c'")
-            }
-        }
-    }
 }
 
-// Todo: finish this function
+// DONE
 // Removes code snippet 3 & 4 in Step 6 of the wiki: https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
 fn remove_fn_tileset_anim(ts_name: &str) {
     let fn_name = ts_name.replace("gTileset", "TilesetAnim");
 
     let re_dec = Regex::new(format!(r"static\s*void\s*{}\s*\(\w+\);", fn_name).as_str()).unwrap();
 
-    let re_def_suffix = r#"\s*\(\w+\s*\w+\)\n\{\n(\s*if\s*\(\w+\s*%\s*\w+\s*==\s*\w+\)\n\s*\w+\(\w+\s*\/\s*\w+\);)*\n\}"#;
-    let re_def_suffix = r"\{([^{}]*|(?R))*\}";
-    let re_def = Regex::new(
-        format!(
-            r"static\s*void\s*{}\(\w+\s*\w+\)\n{}",
-            fn_name, re_def_suffix
-        )
-        .as_str(),
-    )
-    .unwrap();
+    let re_def_suffix = r#"\(\w+\s*\w+\)\n\{\n(.*\n)*\}"#;
+    let re_def =
+        Regex::new(format!(r#"static\s*void\s*{}{}"#, fn_name, re_def_suffix).as_str()).unwrap();
 
     let contents = fs::read_to_string(PATH_TILESET_ANIMS).unwrap();
 
@@ -78,76 +73,76 @@ fn remove_fn_tileset_anim(ts_name: &str) {
     let def_match = re_def.find(&contents);
 
     if dec_match.is_none() {
-        eprintln!("dec failed");
-    }
-    if def_match.is_none() {
-        eprintln!("def failed");
-    }
-
-    /*if dec_match.is_none() || def_match.is_none() {
-        eprintln!("Error: Couldn't find function declaration '{}' in './src/tileset_anims.c'", fn_name);
+        eprintln!("Warning: Couldn't find function declaration. Proceeding...");
     } else {
-        let contents_new = &contents.replace(dec_match.unwrap().as_str(), "").replace(def_match.unwrap().as_str(), "");
-        match fs::write("./src/tileset_anims.c", contents_new) {
-            Ok(o) => println!("Anims. 2: Deleted '{}' in './src/tileset_anims.c", fn_name),
+        let contents_new = &contents.replace(dec_match.unwrap().as_str(), "");
+        match fs::write(PATH_TILESET_ANIMS, contents_new) {
+            Ok(o) => println!("Anims. 2: Deleted function declaration in './src/tileset_anims.c'"),
             Err(e) => eprintln!("Fatal Error: Anims. 2: Failed to write to '/src/tileset_anims.c'"),
         }
-    }*/
+    }
+
+    if def_match.is_none() {
+        eprintln!("Warning: Couldn't find function definition. Proceeding...");
+    } else {
+        let contents_new = &contents.replace(def_match.unwrap().as_str(), "");
+        match fs::write(PATH_TILESET_ANIMS, contents_new) {
+            Ok(o) => println!("Anims. 2: Deleted function definition in './src/tileset_anims.c'"),
+            Err(e) => eprintln!("Fatal Error: Anims. 2: Failed to write to '/src/tileset_anims.c'"),
+        }
+    }
 }
 
-// Todo: Write to the file and replacing the parts in the string. Would be good to edit THE string and not to make a new string.
+// DONE
+// Removes code snipped 5 in https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
 fn remove_fn_queue_anim_tiles_declaration(ts_name: &str) -> PdTsErrorCaptures {
     let mut fn_names: Vec<String> = vec![];
     let re = Regex::new(
         format!(
-            r"static\s*void\s*(QueueAnimTiles_{}_\w+)\(\w+\);",
+            r"static\s*void\s*(QueueAnimTiles_{}_\w+)\((.+)*\);\n",
             ts_name.replace("gTileset_", "")
         )
         .as_str(),
     )
     .unwrap();
-    let contents = fs::read_to_string(PATH_TILESET_ANIMS).unwrap();
+    let mut contents_new = fs::read_to_string(PATH_TILESET_ANIMS).unwrap();
 
-    for captures in re.captures_iter(&contents) {
-        // Pushes capture to vec
-        fn_names.push(captures.get(1).unwrap().as_str().to_string());
-        // Removes capture from contents
-        //
-        // Todo: Replacing the matches
-        //let _ = &contents.replace(captures.get(0).unwrap().as_str(), "");
-        //fs::write(PATH_TILESET_ANIMS, new)?;
+    if Path::new(PATH_TILESET_ANIMS).exists() {
+        for captures in re.captures_iter(&contents_new.clone()) {
+            contents_new = contents_new.replace(captures.get(0).unwrap().as_str(), "");
+            fn_names.push(captures.get(1).unwrap().as_str().to_owned());
+        }
     }
 
     if fn_names.is_empty() {
         Ok(vec![])
     } else {
+        let _ = fs::write(PATH_TILESET_ANIMS, contents_new);
         println!("Anims. 3.1: Removed Queue-Animations-Tiles function declarations.");
         Ok(fn_names)
     }
 }
 
-// Todo: Write to the file and replaceing the parts in the string. Would be good to edit THE string and not to make a new string.
+// Todo: REGEX FIX (removes multiple functions than just one, ik why but not how to fix that)
+// Removes code snipped 6 in https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
 fn remove_fn_queue_anim_tiles_definition(fn_names: Vec<String>) -> PdError {
-    let re_suffix = "\\s*\\(\\w+\\s*\\w+\\)\\n\\{([^}]*)\\}";
-    let contents = fs::read_to_string(PATH_TILESET_ANIMS)?;
-    let mut failed_counter = 0;
+    let re_suffix = "\\s*\\((.*)*\\)\\n\\{(.*\\n)*\\}";
+    let mut contents = fs::read_to_string(PATH_TILESET_ANIMS)?;
 
     if Path::new(PATH_TILESET_ANIMS).exists() {
-        for fn_name in fn_names {
-            let re =
-                Regex::new(format!("\\w+\\s*\\w+\\s*{}{}", fn_name, re_suffix).as_str()).unwrap();
+        for name in fn_names {
+            let re = Regex::new(format!("\\w+\\s*\\w+\\s*{}{}", name, re_suffix).as_str()).unwrap();
             let fn_match = re.find(&contents);
 
             if fn_match.is_none() {
-                println!("Warning: Anims. 3.4 Couldn't find function definiton of '{fn_name}' in '{PATH_TILESET_ANIMS}'");
-                failed_counter += 1;
-            } else {
-                // Todo: Replacing the matches
-                //let _ = contents.replace(fn_match.unwrap().as_str(), "");
-                //fs::write(PATH_TILESET_ANIMS, new)?;
+                println!("Warning: Anims. 3.2 Couldn't find function definiton of '{name}' in '{PATH_TILESET_ANIMS}'");
+            } else if fn_match.is_some() {
+                contents = contents.replace(fn_match.unwrap().as_str(), "");
             }
         }
     }
+    fs::write(PATH_TILESET_ANIMS, contents)?;
+    println!("Anims. 3.2: Removed Queue-Animations-Tiles function definitons.");
     Ok(())
 }
 
@@ -157,12 +152,16 @@ fn remove_tileset_anims_frame(ts_name: &str) {
 }
 
 pub fn test_del(ts_name: &str) -> PdError {
+    let names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
+    if !names.is_empty() {
+        let _ = remove_fn_queue_anim_tiles_definition(names);
+    }
     //remove_fn_init_tileset_anim(ts_name);
     //remove_fn_tileset_anim(ts_name);
-    let fn_names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
-    for names in fn_names {
-        println!("'{}' , ", names);
-    }
+    //let fn_names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
+    //for names in fn_names {
+    //    println!("'{}' , ", names);
+    //}
     //if !fn_names.is_empty() {
     //    remove_fn_queue_anim_tiles_definition(fn_names)?;
     //    remove_tileset_anims_frame(ts_name);
