@@ -125,7 +125,7 @@ fn remove_fn_queue_anim_tiles_declaration(ts_name: &str) -> PdTsErrorCaptures {
 
 // Todo: REGEX FIX (removes multiple functions than just one, ik why but not how to fix that)
 // Removes code snipped 6 in https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
-fn remove_fn_queue_anim_tiles_definition(fn_names: Vec<String>) -> PdError {
+fn remove_fn_queue_anim_tiles_definition(fn_names: &Vec<String>) -> PdError {
     let re_suffix = "\\s*\\((.*)*\\)\\n\\{(.*\\n)*\\}";
     let mut contents = fs::read_to_string(PATH_TILESET_ANIMS)?;
 
@@ -146,15 +146,53 @@ fn remove_fn_queue_anim_tiles_definition(fn_names: Vec<String>) -> PdError {
     Ok(())
 }
 
-// Todo: Create the function
-fn remove_tileset_anims_frame(ts_name: &str) {
-    println!("Not ready yet...");
+// DONE
+// Removes last code snippet
+fn remove_tileset_anims_frame(fn_names: &Vec<String>) {
+    let mut contents = fs::read_to_string(PATH_TILESET_ANIMS).unwrap();
+
+    for name in fn_names {
+        let frame_name = name.replace("QueueAnimTiles", "gTilesetAnims");
+        let re_def = Regex::new(format!("const u16 {}_\\w+\\[\\]\\s*=\\s*INCBIN_U16\\(\"data/tilesets/\\w+/\\w+/anim/\\w+/\\w+.4bpp\"\\);", frame_name).as_str()).unwrap();
+        let re_name = Regex::new(format!("{}_\\w+", frame_name).as_str()).unwrap();
+
+        let mut n: Vec<String> = vec![];
+        for capture in re_def.captures_iter(&contents.clone()) {
+            n.push(
+                re_name
+                    .captures(&contents)
+                    .unwrap()
+                    .get(0)
+                    .unwrap()
+                    .as_str()
+                    .to_string(),
+            );
+            contents = contents.replace(&capture.get(0).unwrap().as_str(), "");
+        }
+
+        let re_prefix = r"const\s*u16\s*\*const\s*";
+        let re_suffix = String::from(r"\{\s*((.*),\n\s*)*") + n.last().unwrap() + r"\s*\};";
+        let re =
+            Regex::new(format!("{}{}\\[\\]\\s*=\\s*{}", re_prefix, frame_name, re_suffix).as_str())
+                .unwrap();
+
+        let arr_match = re.find(&contents);
+
+        if arr_match.is_none() {
+            eprintln!("Warning: Anims. 4: Couldn't find frame definitions. Proceeding...");
+        } else {
+            contents = contents.replace(arr_match.unwrap().as_str(), "");
+        }
+    }
+
+    let _ = fs::write(PATH_TILESET_ANIMS, contents);
+    println!("Anims. 4: Successfully deleted frames.");
 }
 
 pub fn test_del(ts_name: &str) -> PdError {
     let names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
     if !names.is_empty() {
-        let _ = remove_fn_queue_anim_tiles_definition(names);
+        remove_tileset_anims_frame(&names);
     }
     //remove_fn_init_tileset_anim(ts_name);
     //remove_fn_tileset_anim(ts_name);
@@ -174,10 +212,10 @@ pub fn test_del(ts_name: &str) -> PdError {
 pub fn execute_del(ts_name: &str) -> PdError {
     remove_fn_init_tileset_anim(ts_name);
     remove_fn_tileset_anim(ts_name);
-    let fn_names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
+    let fn_names = &remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
     if !fn_names.is_empty() {
         remove_fn_queue_anim_tiles_definition(fn_names)?;
-        remove_tileset_anims_frame(ts_name);
+        remove_tileset_anims_frame(fn_names);
     } else if fn_names.is_empty() {
         eprintln!("Fatal Error: Anims. 3.2: Couldn't find any Queue-Animations-Tiles functions!");
     }

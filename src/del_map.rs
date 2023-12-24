@@ -30,7 +30,7 @@ fn map_exists(map: &str) -> bool {
         eprintln!("Error: Couldn't find the map '{}'.", map);
         return false;
     } else {
-        eprintln!("Error: Some paths couldn't be found. Have you tried to delete a map manually?\nIf you never touched the map files before, except with Porydelete and/or Porymap, please file an issue on my github page.");
+        eprintln!("Error: Some paths couldn't be found. Have you tried to delete a map manually?\nIf you never edited the map files before, except with Porydelete and/or Porymap, please file an issue on my github page.");
         return false;
     }
 }
