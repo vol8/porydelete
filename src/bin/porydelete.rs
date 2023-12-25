@@ -51,7 +51,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // Delete a tileset with its animations (if there are any)
             "tileset" => del_tileset::execute_del(&args.value),
             // Delete tileset animations seperatly.
-            "tileset-anims" => del_tileset::del_anim::test_del(&args.value),
+            "tileset-anims" => del_tileset::del_anim::execute_del(&args.value),
             // Delete a script
             "script" => Ok(()),
             // Delete a pokemon

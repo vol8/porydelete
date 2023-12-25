@@ -56,7 +56,8 @@ fn remove_fn_init_tileset_anim(ts_name: &str) {
     }
 }
 
-// DONE
+// SUSPECT?
+// DONE?
 // Removes code snippet 3 & 4 in Step 6 of the wiki: https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
 fn remove_fn_tileset_anim(ts_name: &str) {
     let fn_name = ts_name.replace("gTileset", "TilesetAnim");
@@ -146,7 +147,8 @@ fn remove_fn_queue_anim_tiles_definition(fn_names: &Vec<String>) -> PdError {
     Ok(())
 }
 
-// DONE
+// SUSPECT
+// DONE?
 // Removes last code snippet
 fn remove_tileset_anims_frame(fn_names: &Vec<String>) {
     let mut contents = fs::read_to_string(PATH_TILESET_ANIMS).unwrap();
@@ -214,7 +216,8 @@ pub fn execute_del(ts_name: &str) -> PdError {
     remove_fn_tileset_anim(ts_name);
     let fn_names = &remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
     if !fn_names.is_empty() {
-        remove_fn_queue_anim_tiles_definition(fn_names)?;
+        println!("Function def del not ready yet...");
+        //remove_fn_queue_anim_tiles_definition(fn_names)?;
         remove_tileset_anims_frame(fn_names);
     } else if fn_names.is_empty() {
         eprintln!("Fatal Error: Anims. 3.2: Couldn't find any Queue-Animations-Tiles functions!");
