@@ -1,10 +1,10 @@
 # About
 
-Porydelete is a CLI tool which allows you to delete specific parts of the 3.gen decomp projects such as Pokemon, Items, Maps, Tilesets, Events and more. This allows ROM-hack creators to clean up their ROM(s).
+Porydelete is a CLI tool which allows you to delete specific parts of the 3rd generation decomp projects such as Pokemon, Items, Maps, Tilesets, Events and more. This allows ROM-hack creators to clean up their ROM(s).
 
 # State of development
 
-For now, you can only edit pokeemerald. Porydelete currently only allows to clear Map-attributes, delete maps and maptilesets. I also want to create a list feature, with which you can see what items (*item refering to maps, tilesets, scripts, pokemon, etc.*) are registered by Porydelete.
+For now, you can only use this tool in the Pokemon Emerald decompilation. Porydeletes current features are: Clear Map-attributes, delete maps and maptilesets. At the moment, I am working on improving my code and making the algorithms faster. After that, I want to add FRLG/RS Support and the List feature for Porydelete. The List feature is a very powerful feature because it shows you what is registered by porydelete. That means that it shows you which maps, tilesets, etc. can be deleted safely. Note: If pokeemerald gets updated in a way that porydelete doesn't work anymore, it will most likely take a few days or weeks to resolve the issue(s).
 
 # Features
 
