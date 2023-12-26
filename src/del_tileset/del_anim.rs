@@ -56,14 +56,14 @@ fn remove_fn_init_tileset_anim(ts_name: &str) {
     }
 }
 
-// SUSPECT?
-// DONE?
+// DONE? REGEX ISSUE
 // Removes code snippet 3 & 4 in Step 6 of the wiki: https://github.com/Voluptua/porydelete/wiki/Map-Tilesets#step-6-only-applies-to-tilesets-with-animations
 fn remove_fn_tileset_anim(ts_name: &str) {
     let fn_name = ts_name.replace("gTileset", "TilesetAnim");
 
     let re_dec = Regex::new(format!(r"static\s*void\s*{}\s*\(\w+\);", fn_name).as_str()).unwrap();
 
+    // issue here.
     let re_def_suffix = r#"\(\w+\s*\w+\)\n\{\n(.*\n)*\}"#;
     let re_def =
         Regex::new(format!(r#"static\s*void\s*{}{}"#, fn_name, re_def_suffix).as_str()).unwrap();
@@ -110,6 +110,7 @@ fn remove_fn_queue_anim_tiles_declaration(ts_name: &str) -> PdTsErrorCaptures {
 
     if Path::new(PATH_TILESET_ANIMS).exists() {
         for captures in re.captures_iter(&contents_new.clone()) {
+            dbg!("{}", captures.get(0).unwrap().as_str());
             contents_new = contents_new.replace(captures.get(0).unwrap().as_str(), "");
             fn_names.push(captures.get(1).unwrap().as_str().to_owned());
         }
@@ -147,8 +148,7 @@ fn remove_fn_queue_anim_tiles_definition(fn_names: &Vec<String>) -> PdError {
     Ok(())
 }
 
-// SUSPECT
-// DONE?
+// DONE
 // Removes last code snippet
 fn remove_tileset_anims_frame(fn_names: &Vec<String>) {
     let mut contents = fs::read_to_string(PATH_TILESET_ANIMS).unwrap();
@@ -191,6 +191,7 @@ fn remove_tileset_anims_frame(fn_names: &Vec<String>) {
     println!("Anims. 4: Successfully deleted frames.");
 }
 
+// [TEST]
 pub fn test_del(ts_name: &str) -> PdError {
     let names = remove_fn_queue_anim_tiles_declaration(ts_name).unwrap();
     if !names.is_empty() {
