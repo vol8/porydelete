@@ -1,3 +1,5 @@
+use std::path::Path;
+
 // Imports
 use clap::Parser;
 use porydelete::filter::PdFilter;
@@ -31,6 +33,7 @@ impl Args {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Parse arguments
     let args = Args::parse();
+    let location_check_path = Path::new("./data");
     // Create a filter
     let attr_filter = filter::MaFilter {
         elem: args.value.clone(),
@@ -38,27 +41,34 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         dest_dir: String::from("./data/maps/porydelete-filter"),
     };
 
-    // Run command
-    match args.command.as_str() {
-        // Delete an attribute
-        "attr" => del_attribute::execute_del(&args.value),
-        // Delete a map
-        "map" => del_map::execute_del(&args.value),
-        // Delete a tileset
-        "tileset" => Ok(()),
-        // Delete a script
-        "script" => Ok(()),
-        // Delete a pokemon
-        "pkmn" => Ok(()),
-        // Delete an item
-        "item" => Ok(()),
-        // List an object
-        "list" => Ok(()),
-        // Filter command for attributes feature
-        "attr-fil" => Ok(attr_filter.do_filter()),
-        // Defilter command for attributes feature
-        "attr-defil" => Ok(attr_filter.do_defilter()),
-        // other cases
-        _ => Ok(args.other_case_command()),
+    if location_check_path.exists() {
+        // Run command
+        match args.command.as_str() {
+            // Delete an attribute
+            "attr" => del_attribute::execute_del(&args.value),
+            // Delete a map
+            "map" => del_map::execute_del(&args.value),
+            // Delete a tileset with its animations (if there are any)
+            "tileset" => del_tileset::execute_del(&args.value),
+            // Delete tileset animations seperatly.
+            "tileset-anims" => del_tileset::del_anim::execute_del(&args.value),
+            // Delete a script
+            "script" => Ok(()),
+            // Delete a pokemon
+            "pkmn" => Ok(()),
+            // Delete an item
+            "item" => Ok(()),
+            // Filter command for attributes feature
+            "attr-fil" => Ok(attr_filter.do_filter()),
+            // Defilter command for attributes feature
+            "attr-defil" => Ok(attr_filter.do_defilter()),
+            // Testing
+            "test" => del_tileset::del_anim::test_del(&args.value),
+            // other cases
+            _ => Ok(args.other_case_command()),
+        }
+    } else {
+        println!("Fatal Error: This executable is not located in the root of any 3rd generation decompilation projects!");
+        Ok(())
     }
 }

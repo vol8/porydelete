@@ -23,7 +23,7 @@ fn print_result(
     }
 }
 
-// Not really removes it but if replaces the key in the map with the new value.
+// Not really removes it but it replaces the key in the map with the new value.
 fn remove_attribute(value: &str, map: &mut IndexMap<String, Value>, c_success: &mut i32) {
     if value == "connections" {
         map.insert(value.to_owned(), serde_json::Value::Null);
@@ -47,11 +47,11 @@ fn enter_subdir_and_delete(
         // Is the name of the subdirectory which is used to create the path to check if map.json exists.
         let subdir_name = subdir_path.file_name().unwrap().to_str().unwrap();
         // Creates the path to the map.json file with 'subdir_name' as the name of the subdirectory.
-        let full_dir_name_as_string = format!("./data/maps/{}/map.json", subdir_name);
-        let full_dir_name = Path::new(&full_dir_name_as_string);
+        let full_dir_as_string = format!("./data/maps/{}/map.json", subdir_name);
+        let full_dir = Path::new(&full_dir_as_string);
 
         // We check if map.json exists for each map
-        if full_dir_name.exists() {
+        if full_dir.exists() {
             // enters subdir
             for file in fs::read_dir(&subdir_path)? {
                 // creates path to file in subdir
@@ -80,7 +80,7 @@ fn enter_subdir_and_delete(
             }
         } else {
             *c_failed += 1;
-            v_failed.push(full_dir_name.to_str().unwrap().to_string());
+            v_failed.push(full_dir.to_str().unwrap().to_string());
         }
     }
     Ok(())

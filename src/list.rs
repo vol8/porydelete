@@ -1,12 +1,3 @@
-pub mod del_attribute;
-pub mod del_map;
-pub mod del_tileset;
-pub mod filter;
-// -----------
-// To be added
-// -----------
-//pub mod list;
-/*
 pub fn list_for_value(command: &str, value: &str) -> Result<(), Box<dyn std::error::Error>> {
     match value {
         _ => {
@@ -17,4 +8,3 @@ pub fn list_for_value(command: &str, value: &str) -> Result<(), Box<dyn std::err
         }
     }
 }
-*/
